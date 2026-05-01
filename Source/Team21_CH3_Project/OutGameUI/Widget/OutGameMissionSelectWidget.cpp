@@ -4,8 +4,18 @@
 #include "OutGameUI/Widget/OutGameMainMenuWidget.h"
 
 void UOutGameMissionSelectWidget::NativeOnInitialized(){
-	NormalButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleNormalClicked);
-	BackButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleBackClicked);
+	Super::NativeOnInitialized();
+	
+	if (IsValid(NormalButton) == true)
+	{
+		NormalButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleNormalClicked);
+	}
+
+	if (IsValid(BackButton) == true)
+	{
+		BackButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleBackClicked);
+	}
+
 }
 
 void UOutGameMissionSelectWidget::HandleNormalClicked(){

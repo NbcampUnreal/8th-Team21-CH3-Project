@@ -8,15 +8,26 @@
 void UOutGameMainMenuWidget::NativeOnInitialized(){
 	Super::NativeOnInitialized();
 	
-	ContinueButton->OnClicked.AddUniqueDynamic(this, &ThisClass::ShowLobby);
-	PlayButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandlePlayClicked);
-	QuitButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleQuitClicked);
+	if (IsValid(ContinueButton) == true)
+	{
+		ContinueButton->OnClicked.AddUniqueDynamic(this, &ThisClass::ShowLobby);
+	}
+	
+	if (IsValid(PlayButton) == true)
+	{
+		PlayButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandlePlayClicked);
+	}
+	
+	if (IsValid(QuitButton) == true)
+	{
+		QuitButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleQuitClicked);
+	}
 }
 
 void UOutGameMainMenuWidget::ShowLobby(){
 	if (IsValid(ScreenSwitcher) == true)
 	{
-		ScreenSwitcher->SetActiveWidgetIndex(0);
+		ScreenSwitcher->SetActiveWidgetIndex(1);
 	}
 }
 
