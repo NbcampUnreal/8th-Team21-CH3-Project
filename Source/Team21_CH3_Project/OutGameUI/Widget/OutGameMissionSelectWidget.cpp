@@ -1,7 +1,9 @@
 ﻿// OutGameMissionSelect.cpp
 #include "OutGameUI/Widget/OutGameMissionSelectWidget.h"
+#include "OutGameRootWidget.h"
 #include "Components/Button.h"
-#include "OutGameUI/Widget/OutGameMainMenuWidget.h"
+#include "OutGameUI/Controller/OutGamePlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 void UOutGameMissionSelectWidget::NativeOnInitialized(){
 	Super::NativeOnInitialized();
@@ -19,9 +21,12 @@ void UOutGameMissionSelectWidget::NativeOnInitialized(){
 }
 
 void UOutGameMissionSelectWidget::HandleNormalClicked(){
-	// OpenLevel logic
+	UGameplayStatics::OpenLevel(this, TEXT("TestMap"));
 }
 
 void UOutGameMissionSelectWidget::HandleBackClicked(){
-	
+	if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
+	{
+		PC->GetRootWidget()->ShowMainMenu();
+	}
 }

@@ -17,10 +17,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "OutGame UI")
 	TSubclassOf<UOutGameRootWidget> RootWidgetClass;
-	
+
 public:
-	UFUNCTION()
-	void ShowMissionSelect();
+	UOutGameRootWidget* GetRootWidget() const;
 	
 private:
 	UPROPERTY(Transient)

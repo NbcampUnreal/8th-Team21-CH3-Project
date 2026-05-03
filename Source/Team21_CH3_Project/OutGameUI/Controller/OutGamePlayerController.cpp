@@ -23,9 +23,6 @@ void AOutGamePlayerController::BeginPlay(){
 	SetInputMode(InputMode);
 }
 
-void AOutGamePlayerController::ShowMissionSelect(){
-	if (IsValid(RootWidgetInstance) == true)
-	{
-		RootWidgetInstance->ShowMissionSelect();
-	}
+UOutGameRootWidget* AOutGamePlayerController::GetRootWidget() const{
+	return RootWidgetInstance;
 }
