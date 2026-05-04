@@ -3,10 +3,13 @@
 
 #include "CoreMinimal.h"
 #include "Character/CharacterBase.h"
+#include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
+class UInputConfig;
+class UInputMappingContext;
 
 UCLASS()
 class TEAM21_CH3_PROJECT_API APlayerCharacter : public ACharacterBase
@@ -32,5 +35,16 @@ protected:
 	TObjectPtr<UCameraComponent> CameraComp;
 
 #pragma endregion
+
+private:
+	void InputMove(const FInputActionValue& InValue);
+
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, meta =(AllowPrivateAccess))
+	TObjectPtr<UInputConfig> CharacterInputConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,meta =(AllowPrivateAccess))
+	TObjectPtr<UInputMappingContext> CharacterIMC;
+
 
 };
