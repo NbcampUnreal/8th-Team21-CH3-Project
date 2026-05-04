@@ -13,6 +13,5 @@ class TEAM21_CH3_PROJECT_API ACharacterBase : public ACharacter
 public:
 	ACharacterBase();
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };

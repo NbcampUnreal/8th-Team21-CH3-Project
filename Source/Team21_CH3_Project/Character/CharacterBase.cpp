@@ -11,7 +11,7 @@ ACharacterBase::ACharacterBase()
 	float CapsuleHeight = 90.f;
 	float CapsuleRadius = 40.f;
 
-	GetCapsuleComponent()->InitCapsuleSize(CapsuleHeight, CapsuleRadius); //캡슐컴포넌트 Size
+	GetCapsuleComponent()->InitCapsuleSize(CapsuleRadius, CapsuleHeight); //캡슐컴포넌트 Size
 
 	FVector CharacterPosition(0.f, 0.f, -CapsuleHeight); //캐릭터 초기 위치
 	FRotator CharacterRotation(0.f, -90.f, 0.f); //캐릭터 초기 회전방향
@@ -25,9 +25,4 @@ ACharacterBase::ACharacterBase()
 }
 
 
-void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
 
