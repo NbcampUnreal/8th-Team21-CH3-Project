@@ -1,7 +1,6 @@
 // OutGameMainMenuWidget.cpp
 #include "OutGameUI/Widget/OutGameMainMenuWidget.h"
-
-#include "OutGameRootWidget.h"
+#include "OutGameUI/Widget/OutGameRootWidget.h"
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "OutGameUI/Controller/OutGamePlayerController.h"
@@ -36,7 +35,8 @@ void UOutGameMainMenuWidget::ShowLobby(){
 void UOutGameMainMenuWidget::HandlePlayClicked(){
 	if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
 	{
-		PC->GetRootWidget()->ShowMissionSelect();
+		if (UOutGameRootWidget* RootWidgetInstance = PC->GetRootWidget())
+		RootWidgetInstance->ShowMissionSelect();
 	}
 }
 

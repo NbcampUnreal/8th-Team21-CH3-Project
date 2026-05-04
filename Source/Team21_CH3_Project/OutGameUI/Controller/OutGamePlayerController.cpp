@@ -2,11 +2,20 @@
 #include "OutGameUI/Controller/OutGamePlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "OutGameUI/Widget/OutGameRootWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 void AOutGamePlayerController::BeginPlay(){
 	Super::BeginPlay();
 	
 	if (!IsLocalController()) return;
+	
+	TArray<AActor*> FoundCameras;
+	UGameplayStatics::GetAllActorsWithTag(this, TEXT("LobbyCamera"), FoundCameras);
+	
+	if (FoundCameras.Num() > 0 && IsValid(FoundCameras[0]))
+	{
+		SetViewTargetWithBlend(FoundCameras[0], 0.0f);
+	}
 	
 	if (IsValid(RootWidgetClass) == true)
 	{
@@ -24,5 +33,6 @@ void AOutGamePlayerController::BeginPlay(){
 }
 
 UOutGameRootWidget* AOutGamePlayerController::GetRootWidget() const{
-	return RootWidgetInstance;
+	if (IsValid(RootWidgetInstance) == true) return RootWidgetInstance;
+	return nullptr;
 }

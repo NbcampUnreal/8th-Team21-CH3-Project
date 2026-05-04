@@ -1,6 +1,6 @@
 ﻿// OutGameMissionSelect.cpp
 #include "OutGameUI/Widget/OutGameMissionSelectWidget.h"
-#include "OutGameRootWidget.h"
+#include "OutGameUI/Widget/OutGameRootWidget.h"
 #include "Components/Button.h"
 #include "OutGameUI/Controller/OutGamePlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -27,6 +27,9 @@ void UOutGameMissionSelectWidget::HandleNormalClicked(){
 void UOutGameMissionSelectWidget::HandleBackClicked(){
 	if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
 	{
-		PC->GetRootWidget()->ShowMainMenu();
+		if (UOutGameRootWidget* RootWidgetInstance = PC->GetRootWidget())
+		{
+			RootWidgetInstance->ShowMainMenu();
+		}
 	}
 }
