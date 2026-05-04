@@ -19,15 +19,21 @@ public:
 	//void ShowCharacterSelect();
 	
 protected:
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<UWidgetSwitcher> ScreenSwitcher;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UWidgetSwitcher> ScreenSwitcher;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> EasyButton;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> NormalButton;
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> HardButton;
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> BackButton; 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> BackToMapButton; 
 	
 	UFUNCTION()
-	void HandleNormalClicked();
+	void HandleLevelClicked();
 	UFUNCTION()
 	void HandleBackClicked();
 };
