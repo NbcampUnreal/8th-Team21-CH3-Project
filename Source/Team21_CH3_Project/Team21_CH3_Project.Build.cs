@@ -12,6 +12,8 @@ public class Team21_CH3_Project : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
+        //PublicDependencyModuleNames.AddRange(new string[] { "Team21_CH3_Project" });
+
         PublicIncludePaths.AddRange(new string[] { "Team21_CH3_Project" });
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
