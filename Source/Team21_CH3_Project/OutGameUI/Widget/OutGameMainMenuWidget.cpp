@@ -8,35 +8,33 @@
 
 void UOutGameMainMenuWidget::NativeOnInitialized(){
 	Super::NativeOnInitialized();
-	
-	if (IsValid(ContinueButton) == true)	ContinueButton->OnClicked.AddUniqueDynamic(this, &ThisClass::ShowLobby);
-	if (IsValid(PlayButton) == true) PlayButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandlePlayClicked);
-	if (IsValid(QuitButton) == true) QuitButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleQuitClicked);
+
+	if (IsValid(ContinueButton) == true)
+		ContinueButton->OnClicked.AddUniqueDynamic(this, &ThisClass::ShowLobby);
+	if (IsValid(PlayButton) == true)
+		PlayButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandlePlayClicked);
+	if (IsValid(QuitButton) == true)
+		QuitButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleQuitClicked);
 }
 
 void UOutGameMainMenuWidget::ShowLobby(){
-	if (IsValid(ScreenSwitcher) == true)
-	{
-		ScreenSwitcher->SetActiveWidgetIndex(1);
-	}
+	if (IsValid(ScreenSwitcher) == true) { ScreenSwitcher->SetActiveWidgetIndex(1); }
 }
 
 void UOutGameMainMenuWidget::HandlePlayClicked(){
-	if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
+	if (AOutGamePlayerController* pc = GetOwningPlayer<AOutGamePlayerController>())
 	{
-		if (UOutGameRootWidget* RootWidgetInstance = PC->GetRootWidget())
+		if (UOutGameRootWidget* rootWidgetInstance = pc->GetRootWidget())
 		{
-			RootWidgetInstance->ShowTransition([this, PC, RootWidgetInstance]()
-			{
-				RootWidgetInstance->ShowMissionSelect();
-			});
+			rootWidgetInstance->ShowMissionSelect();
+			// rootWidgetInstance->ShowTransition([this, pc, rootWidgetInstance]() {};
 		}
 	}
 }
 
 void UOutGameMainMenuWidget::HandleQuitClicked(){
-	if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
+	if (AOutGamePlayerController* pc = GetOwningPlayer<AOutGamePlayerController>())
 	{
-		UKismetSystemLibrary::QuitGame(this, PC, EQuitPreference::Quit, false);
+		UKismetSystemLibrary::QuitGame(this, pc, EQuitPreference::Quit, false);
 	}
 }

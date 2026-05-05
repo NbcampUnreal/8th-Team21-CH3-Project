@@ -32,17 +32,21 @@ void UOutGameRootWidget::ShowResult()
 	}
 }
 
-void UOutGameRootWidget::ShowTransition(TFunction<void()> InAction){
-	PendingTransitionAction = MoveTemp(InAction);
+void UOutGameRootWidget::ShowSelectTransition(){
+	if (IsValid(TransitionWidget) == true) TransitionWidget->PlaySelectTransition();
+}
+
+void UOutGameRootWidget::ShowTransition(TFunction<void()> action){
+	pendingTransitionAction = MoveTemp(action);
 	
 	if (IsValid(TransitionWidget) == true) TransitionWidget->PlayFadeOut();
 }
 
 void UOutGameRootWidget::HandleTransitionFadeOutFinished(){
-	if (PendingTransitionAction)
+	if (pendingTransitionAction)
 	{
-		PendingTransitionAction();
-		PendingTransitionAction = nullptr;
+		pendingTransitionAction();
+		pendingTransitionAction = nullptr;
 	}
 	if (IsValid(TransitionWidget) == true)
 	{

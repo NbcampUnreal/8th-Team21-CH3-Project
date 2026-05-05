@@ -16,7 +16,10 @@ class TEAM21_CH3_PROJECT_API UOutGameTransitionWidget : public UOutGameWidgetBas
 	
 public:
 	virtual void NativeOnInitialized() override;
+
+#pragma region Transition
 	
+public:
 	void PlayFadeOut();
 	void PlayFadeIn();
 	
@@ -33,4 +36,19 @@ private:
 	void HandleFadeOutFinished();
 	UFUNCTION()
 	void HandleFadeInFinished();
+	
+#pragma endregion
+	
+#pragma region SelectTransition
+	
+public:
+	void PlaySelectTransition();
+	
+private:
+	UFUNCTION()
+	void HandleSelectFinished();
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<UWidgetAnimation> SelectAnim;
+	
+#pragma endregion
 };

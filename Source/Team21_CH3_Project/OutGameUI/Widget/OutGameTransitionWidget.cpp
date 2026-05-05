@@ -5,29 +5,37 @@
 void UOutGameTransitionWidget::NativeOnInitialized(){
 	Super::NativeOnInitialized();
 	
-	if (IsValid(FadeOutAnim))
+	if (IsValid(FadeOutAnim) == true)
 	{
-		FWidgetAnimationDynamicEvent FadeOutFinishedEvent;
-		FadeOutFinishedEvent.BindDynamic(this, &ThisClass::HandleFadeOutFinished);
-		BindToAnimationFinished(FadeOutAnim, FadeOutFinishedEvent);
+		FWidgetAnimationDynamicEvent fadeOutFinishedEvent;
+		fadeOutFinishedEvent.BindDynamic(this, &ThisClass::HandleFadeOutFinished);
+		BindToAnimationFinished(FadeOutAnim, fadeOutFinishedEvent);
 	}
 	
-	if (IsValid(FadeInAnim))
+	if (IsValid(FadeInAnim) == true)
 	{
-		FWidgetAnimationDynamicEvent FadeInFinishedEvent;
-		FadeInFinishedEvent.BindDynamic(this, &ThisClass::HandleFadeInFinished);
-		BindToAnimationFinished(FadeInAnim, FadeInFinishedEvent);
+		FWidgetAnimationDynamicEvent fadeInFinishedEvent;
+		fadeInFinishedEvent.BindDynamic(this, &ThisClass::HandleFadeInFinished);
+		BindToAnimationFinished(FadeInAnim, fadeInFinishedEvent);
 	}
+	
+	if (IsValid(SelectAnim) == true)
+	{
+		FWidgetAnimationDynamicEvent selectFinishedEvent;
+		selectFinishedEvent.BindDynamic(this, &ThisClass::HandleSelectFinished);
+		BindToAnimationFinished(SelectAnim, selectFinishedEvent);
+	}
+	
 }
 
 void UOutGameTransitionWidget::PlayFadeOut(){
 	SetVisibility(ESlateVisibility::Visible);
 	
-	if (IsValid(FadeOutAnim)) PlayAnimation(FadeOutAnim);
+	if (IsValid(FadeOutAnim) == true) PlayAnimation(FadeOutAnim);
 }
 
 void UOutGameTransitionWidget::PlayFadeIn(){
-	if (IsValid(FadeInAnim)) PlayAnimation(FadeInAnim);
+	if (IsValid(FadeInAnim) == true) PlayAnimation(FadeInAnim);
 }
 
 void UOutGameTransitionWidget::HandleFadeOutFinished(){
@@ -36,6 +44,17 @@ void UOutGameTransitionWidget::HandleFadeOutFinished(){
 
 void UOutGameTransitionWidget::HandleFadeInFinished(){
 	SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UOutGameTransitionWidget::HandleSelectFinished(){
+	SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UOutGameTransitionWidget::PlaySelectTransition(){
+	SetVisibility(ESlateVisibility::Visible);
+	
+	if (IsValid(SelectAnim) == true) PlayAnimation(SelectAnim);
+	else SetVisibility(ESlateVisibility::Collapsed);
 }
 
 

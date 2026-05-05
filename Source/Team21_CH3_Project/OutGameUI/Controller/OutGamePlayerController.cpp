@@ -20,10 +20,12 @@ void AOutGamePlayerController::BeginPlay(){
 		}
 	}
 	
+	// TODO:Create GameInstance Result / MainMenu Setting 
+	
 	bShowMouseCursor = true;
 	
-	FInputModeUIOnly InputMode;
-	SetInputMode(InputMode);
+	FInputModeUIOnly inputMode;
+	SetInputMode(inputMode);
 }
 
 UOutGameRootWidget* AOutGamePlayerController::GetRootWidget() const{
@@ -32,11 +34,11 @@ UOutGameRootWidget* AOutGamePlayerController::GetRootWidget() const{
 }
 
 void AOutGamePlayerController::SetViewTargetByTag(FName cameraTag, float blendTime){
-	TArray<AActor*> FoundCameras;
-	UGameplayStatics::GetAllActorsWithTag(this, cameraTag, FoundCameras);
+	TArray<AActor*> foundCameras;
+	UGameplayStatics::GetAllActorsWithTag(this, cameraTag, foundCameras);
 	
-	if (FoundCameras.Num() > 0 && IsValid(FoundCameras[0]))
+	if (foundCameras.Num() > 0 && IsValid(foundCameras[0]))
 	{
-		SetViewTargetWithBlend(FoundCameras[0], blendTime);
+		SetViewTargetWithBlend(foundCameras[0], blendTime);
 	}
 }

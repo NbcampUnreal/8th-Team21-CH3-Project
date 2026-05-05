@@ -21,14 +21,16 @@ public:
 	void ShowMissionSelect();
 	UFUNCTION(BlueprintCallable, Category = "OutGame UI")
 	void ShowResult();
+	UFUNCTION(BlueprintCallable, Category = "OutGame UI")
+	void ShowSelectTransition();
 
-	void ShowTransition(TFunction<void()> InAction);
+	void ShowTransition(TFunction<void()> action);
 
 protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UWidgetSwitcher> ScreenSwitcher;
 	
-	TFunction<void()> PendingTransitionAction;
+	TFunction<void()> pendingTransitionAction;
 	
 	UFUNCTION()
 	void HandleTransitionFadeOutFinished();
