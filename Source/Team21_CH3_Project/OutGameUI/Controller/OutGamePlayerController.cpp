@@ -9,13 +9,7 @@ void AOutGamePlayerController::BeginPlay(){
 	
 	if (!IsLocalController()) return;
 	
-	TArray<AActor*> FoundCameras;
-	UGameplayStatics::GetAllActorsWithTag(this, TEXT("LobbyCamera"), FoundCameras);
-	
-	if (FoundCameras.Num() > 0 && IsValid(FoundCameras[0]))
-	{
-		SetViewTargetWithBlend(FoundCameras[0], 0.0f);
-	}
+	SetViewTargetByTag("LobbyCamera", 0.0f);
 	
 	if (IsValid(RootWidgetClass) == true)
 	{
@@ -35,4 +29,14 @@ void AOutGamePlayerController::BeginPlay(){
 UOutGameRootWidget* AOutGamePlayerController::GetRootWidget() const{
 	if (IsValid(RootWidgetInstance) == true) return RootWidgetInstance;
 	return nullptr;
+}
+
+void AOutGamePlayerController::SetViewTargetByTag(FName cameraTag, float blendTime){
+	TArray<AActor*> FoundCameras;
+	UGameplayStatics::GetAllActorsWithTag(this, cameraTag, FoundCameras);
+	
+	if (FoundCameras.Num() > 0 && IsValid(FoundCameras[0]))
+	{
+		SetViewTargetWithBlend(FoundCameras[0], blendTime);
+	}
 }

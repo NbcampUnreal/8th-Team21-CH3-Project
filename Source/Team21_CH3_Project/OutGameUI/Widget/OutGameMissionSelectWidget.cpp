@@ -20,18 +20,15 @@ void UOutGameMissionSelectWidget::HandleLevelClicked(){
 	// UGameplayStatics::OpenLevel(this, TEXT("TestMap"));
 	// TODO:Move to Map Logic 
 	
-	TArray<AActor*> FoundCameras;
-	UGameplayStatics::GetAllActorsWithTag(this, TEXT("CharacterSelectCamera"), FoundCameras);
-	
-	if (FoundCameras.Num() > 0 && IsValid(FoundCameras[0]))
+	if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
 	{
-		if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
+		if (UOutGameRootWidget* RootWidgetInstance = PC->GetRootWidget())
 		{
-			PC->SetViewTargetWithBlend(FoundCameras[0], 0.1f);
-			if (IsValid(ScreenSwitcher) == true)
+			RootWidgetInstance->ShowTransition([this, PC, RootWidgetInstance]()
 			{
-				ScreenSwitcher->SetActiveWidgetIndex(1);
-			}
+				PC->SetViewTargetByTag("CharacterSelectCamera", 0.0f);
+				if (IsValid(ScreenSwitcher) == true) ScreenSwitcher->SetActiveWidgetIndex(1);
+			});
 		}
 	}
 }
@@ -39,15 +36,27 @@ void UOutGameMissionSelectWidget::HandleLevelClicked(){
 void UOutGameMissionSelectWidget::HandleBackClicked(){
 	if (ScreenSwitcher->GetActiveWidgetIndex() == 1)
 	{
-		ScreenSwitcher->SetActiveWidgetIndex(0);
-		// TODO:Camera Move Logic -> TEXT("CharacterSelectCamera")
+		if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
+		{
+			if (UOutGameRootWidget* RootWidgetInstance = PC->GetRootWidget())
+			{
+				RootWidgetInstance->ShowTransition([this, PC, RootWidgetInstance]()
+				{
+					PC->SetViewTargetByTag("LobbyCamera", 0.0f);
+					if (IsValid(ScreenSwitcher) == true) ScreenSwitcher->SetActiveWidgetIndex(0);
+				});
+			}
+		}
 	}
 	else{
 		if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
 		{
 			if (UOutGameRootWidget* RootWidgetInstance = PC->GetRootWidget())
 			{
-				RootWidgetInstance->ShowMainMenu();
+				RootWidgetInstance->ShowTransition([this, PC, RootWidgetInstance]()
+				{
+					RootWidgetInstance->ShowMainMenu();
+				});
 			}
 		}
 	}

@@ -5,7 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "OutGameWidgetBase.generated.h"
 
-UCLASS(Abstract, Blueprintable)
+UCLASS()
 class TEAM21_CH3_PROJECT_API UOutGameWidgetBase : public UUserWidget
 {
 	GENERATED_BODY()
