@@ -16,5 +16,7 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TObjectPtr<UInputAction> Move;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInputAction> Look;
 
 };
