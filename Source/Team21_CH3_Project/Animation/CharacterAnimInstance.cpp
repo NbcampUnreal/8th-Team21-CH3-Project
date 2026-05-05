@@ -14,6 +14,7 @@ void UCharacterAnimInstance::NativeInitializeAnimation()
 		OwnerCharacter = Cast<ACharacterBase>(OwnerPawn);
 		OwnerCharacterMovement = OwnerCharacter->GetCharacterMovement();
 	}
+	bIsUnarmed = true;
 }
 
 void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -28,6 +29,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		bIsMove = (KINDA_SMALL_NUMBER < GroundSpeed);
 		bIsFalling = OwnerCharacterMovement->IsFalling();
+		bIsUnarmed = OwnerCharacter->GetCurrentWeaponAttackAnimMontage() == nullptr ? true : false;
 	}
 
 	

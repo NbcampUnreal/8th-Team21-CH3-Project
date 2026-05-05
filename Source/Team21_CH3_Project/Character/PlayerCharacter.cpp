@@ -7,6 +7,12 @@
 #include "EnhancedInputComponent.h"
 #include "Input/InputConfig.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Item/Weapon.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Component/PickupComponent.h"
+#include "Engine/EngineTypes.h"
+#include "Engine/DamageEvents.h"
+#include "Team21_CH3_Project.h"
 
 
 
@@ -17,6 +23,11 @@ APlayerCharacter::APlayerCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
+
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
@@ -62,6 +73,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		CharacterInputComponent->BindAction(CharacterInputConfig->Look, ETriggerEvent::Triggered, this, &ThisClass::InputLook);
 		CharacterInputComponent->BindAction(CharacterInputConfig->Jump, ETriggerEvent::Started, this, &ACharacter::Jump);
 		CharacterInputComponent->BindAction(CharacterInputConfig->Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		CharacterInputComponent->BindAction(CharacterInputConfig->AttackRanged, ETriggerEvent::Started, this, &ThisClass::InputAttackRanged);
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent Bind Suceess"));
 	}
 }
@@ -85,5 +97,134 @@ void APlayerCharacter::InputLook(const FInputActionValue& InValue)
 	FVector2D LookVector = InValue.Get<FVector2D>();
 
 	AddControllerYawInput(LookVector.X);
-	AddControllerYawInput(LookVector.Y);
+	AddControllerPitchInput(LookVector.Y);
+}
+
+void APlayerCharacter::InputAttackRanged(const FInputActionValue& InValue)
+{
+	//if (0.f < GetCharacterMovement()->Velocity.Size())
+	//	//캐릭터의 속도(벡터의 크기)가 0이상이면 -> 움직이고 있다면
+	//{
+	//	return; //코드 실행 X
+	//}
+	//
+	//if (IsValid(CurrentWeapon) == false) // 무기를 줍지 않았다면
+	//{
+	//	return; //코드 실행 X
+	//}
+	//
+	//if (IsValid(GetCurrentWeaponAttackAnimMontage()) == false) //애님몽타주가 연결X라면
+	//{
+	//	return; //코드 실행 X
+	//}
+	//
+	//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance(); //현재 클래스의 메시(캐릭터)의 애님인스턴스
+	//if (IsValid(AnimInstance) == true) //가 있다면
+	//{
+	//	if (AnimInstance->Montage_IsPlaying(GetCurrentWeaponAttackAnimMontage()) == false) //애님몽타주가 실행중이 아니라면
+	//	{
+	//		AnimInstance->Montage_Play(GetCurrentWeaponAttackAnimMontage()); //해당 애님 몽타주 실행
+	//	}
+	//}
+
+	TryFire();
+}
+
+void APlayerCharacter::TryFire()
+{
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (IsValid(PlayerController) == true)
+	{
+#pragma region CaculateTargetTransform
+		float FocalDistance = 400.f;
+		FVector FocalLocation;
+		FVector CameraLocation;
+		FRotator CameraRotation;
+
+		PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+		FVector AimDirectionFromCamera = CameraRotation.Vector().GetSafeNormal();
+		FocalLocation = CameraLocation + (AimDirectionFromCamera * FocalDistance);
+
+		FVector WeaponMuzzleLocation = CurrentWeapon->GetPickupComponent()->GetSocketLocation(TEXT("MuzzleFlash"));
+		FVector FinalFocalLocation = FocalLocation + (((WeaponMuzzleLocation - FocalLocation) | AimDirectionFromCamera) * AimDirectionFromCamera);
+
+		FTransform TargetTransform = FTransform(CameraRotation, FinalFocalLocation);
+
+		if (1 == ShowAttackRangedDebug)
+		{
+			DrawDebugSphere(GetWorld(), WeaponMuzzleLocation, 2.f, 16, FColor::Red, false, 60.f);
+
+			DrawDebugSphere(GetWorld(), CameraLocation, 2.f, 16, FColor::Yellow, false, 60.f);
+
+			DrawDebugSphere(GetWorld(), FinalFocalLocation, 2.f, 16, FColor::Magenta, false, 60.f);
+
+			DrawDebugLine(GetWorld(), FocalLocation, WeaponMuzzleLocation, FColor::Yellow, false, 60.f, 0, 2.f);
+
+			DrawDebugLine(GetWorld(), CameraLocation, FinalFocalLocation, FColor::Blue, false, 60.f, 0, 2.f);
+
+			DrawDebugLine(GetWorld(), WeaponMuzzleLocation, FinalFocalLocation, FColor::Red, false, 60.f, 0, 2.f);
+		}
+
+#pragma endregion
+
+#pragma region PerformLineTracing
+
+		FVector BulletDirection = TargetTransform.GetUnitAxis(EAxis::X);
+		FVector StartLocation = WeaponMuzzleLocation;
+		FVector EndLocation = TargetTransform.GetLocation() + BulletDirection * CurrentWeapon->GetMaxAttackRange();
+
+		FHitResult HitResult;
+		FCollisionQueryParams TraceParams(NAME_None, false, this);
+		TraceParams.AddIgnoredActor(CurrentWeapon);
+
+		bool IsCollided = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_ATTACK, TraceParams);
+		if (IsCollided == false)
+		{
+			HitResult.TraceStart = StartLocation;
+			HitResult.TraceEnd = EndLocation;
+		}
+
+		if (2 == ShowAttackRangedDebug)
+		{
+			if (IsCollided == true)
+			{
+				DrawDebugSphere(GetWorld(), StartLocation, 2.f, 16, FColor::Red, false, 60.f);
+
+				DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 2.f, 16, FColor::Green, false, 60.f);
+
+				DrawDebugLine(GetWorld(), StartLocation, HitResult.ImpactPoint, FColor::Blue, false, 60.f, 0, 2.f);
+			}
+			else
+			{
+				DrawDebugSphere(GetWorld(), StartLocation, 2.f, 16, FColor::Red, false, 60.f);
+
+				DrawDebugSphere(GetWorld(), EndLocation, 2.f, 16, FColor::Green, false, 60.f);
+
+				DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Blue, false, 60.f, 0, 2.f);
+			}
+		}
+
+#pragma endregion
+
+		if (IsCollided == true)
+		{
+			ACharacterBase* HittedCharacter = Cast<ACharacterBase>(HitResult.GetActor());
+			if (IsValid(HittedCharacter) == true)
+			{
+				FDamageEvent DamageEvent;
+				HittedCharacter->TakeDamage(10.f, DamageEvent, GetController(), this);
+			}
+		}
+
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (IsValid(AnimInstance) == true)
+		{
+			if (AnimInstance->Montage_IsPlaying(GetCurrentWeaponAttackAnimMontage()) == false)
+			{
+				AnimInstance->Montage_Play(GetCurrentWeaponAttackAnimMontage());
+			}
+		}
+
+	}
 }

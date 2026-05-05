@@ -33,4 +33,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	uint8 bIsFalling : 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	uint8 bIsUnarmed : 1;
 };

@@ -7,6 +7,7 @@
 
 class APlayerCharacter;
 class UPickupComponent;
+class UAnimMontage;
 
 UCLASS()
 class TEAM21_CH3_PROJECT_API AWeapon : public AActor
@@ -16,6 +17,11 @@ class TEAM21_CH3_PROJECT_API AWeapon : public AActor
 public:	
 	AWeapon();
 
+	UPickupComponent* GetPickupComponent() const { return PickupComponent; }
+
+	UAnimMontage* GetAttackMontage() const { return AttackMontage; }
+
+	float GetMaxAttackRange() const { return MaxAttackRange; }
 protected:
 	virtual void BeginPlay() override;
 
@@ -26,6 +32,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UPickupComponent> PickupComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UAnimMontage> AttackMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (Units = cm))
+	float MaxAttackRange = 25000.f;
 
 };

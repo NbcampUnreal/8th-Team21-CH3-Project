@@ -20,4 +20,6 @@ public:
 	TObjectPtr<UInputAction> Look;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UInputAction> Jump;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInputAction> AttackRanged;
 };
