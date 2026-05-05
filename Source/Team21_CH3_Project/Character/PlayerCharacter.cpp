@@ -60,6 +60,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		CharacterInputComponent->BindAction(CharacterInputConfig->Move, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
 		CharacterInputComponent->BindAction(CharacterInputConfig->Look, ETriggerEvent::Triggered, this, &ThisClass::InputLook);
+		CharacterInputComponent->BindAction(CharacterInputConfig->Jump, ETriggerEvent::Started, this, &ACharacter::Jump);
+		CharacterInputComponent->BindAction(CharacterInputConfig->Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent Bind Suceess"));
 	}
 }
@@ -74,8 +76,8 @@ void APlayerCharacter::InputMove(const FInputActionValue& InValue)
 	const FVector FowardVector = FRotationMatrix(CharacterRotationYaw).GetUnitAxis(EAxis::X);
 	const FVector RightVector = FRotationMatrix(CharacterRotationYaw).GetUnitAxis(EAxis::Y);
 
-	AddMovementInput(GetActorForwardVector(),MoveVector.X);
-	AddMovementInput(GetActorRightVector(), MoveVector.Y);
+	AddMovementInput(FowardVector,MoveVector.X);
+	AddMovementInput(RightVector, MoveVector.Y);
 }
 
 void APlayerCharacter::InputLook(const FInputActionValue& InValue)
