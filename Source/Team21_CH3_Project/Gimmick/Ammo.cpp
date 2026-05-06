@@ -1,6 +1,6 @@
 
 #include "Gimmick/Ammo.h"
-#include "Gimmick/PickupComponent.h"
+#include "Component/PickupComponent.h"
 #include "Character/PlayerCharacter.h"
 
 AAmmo::AAmmo()
