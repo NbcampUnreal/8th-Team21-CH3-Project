@@ -47,8 +47,20 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->JumpZVelocity = 600.f; // 점프시 튕겨 올라가는 속도
 	GetCharacterMovement()->AirControl = 0.5f; //공중에서 컨트롤 정도
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f; // 이동키를 뗐을때 감속속도
+	GetCharacterMovement()->MaxAcceleration = 2048.f;
 
 	bIsDead = false;
+}
+
+void ACharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
+	if (IsValid(AnimInstance))
+	{
+		AnimInstance->OnPostDead.AddDynamic(this, & ThisClass::HandleOnPostCharacterDead);
+	}
 }
 
 float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -119,6 +131,12 @@ void ACharacterBase::HandleOnCheckHit()
 			}
 		}
 	}
+}
+
+void ACharacterBase::HandleOnPostCharacterDead()
+{
+	SetLifeSpan(0.1f);
+	//0.1초뒤 메모리에서 삭제(Destroy())
 }
 
 

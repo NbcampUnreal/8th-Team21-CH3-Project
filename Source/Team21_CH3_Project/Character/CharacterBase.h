@@ -16,6 +16,8 @@ class TEAM21_CH3_PROJECT_API ACharacterBase : public ACharacter
 public:
 	ACharacterBase();
 
+	virtual void BeginPlay() override;
+
 	virtual float TakeDamage(
 		float DamageAmount, //데미지 세기
 		struct FDamageEvent const& DamageEvent, //데미지 종류 
@@ -60,6 +62,11 @@ public:
 		//Setter CurrenHP
 	bool IsDead() const { return bIsDead; }
 		//죽었는가?(CurrentHP가 0이 되었는가?)
+
+protected:
+	UFUNCTION()
+	virtual void HandleOnPostCharacterDead(); //개릭터 사망 후 로직
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float MaxHP = 100.f;
