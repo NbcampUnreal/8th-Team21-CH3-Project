@@ -60,6 +60,8 @@ void APlayerCharacter::BeginPlay()
 			UE_LOG(LogTemp, Warning, TEXT("AddMappingContext Suceess"));
 		}
 	}
+
+	CurrentWeapon = nullptr;
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -109,10 +111,10 @@ void APlayerCharacter::InputAttackRanged(const FInputActionValue& InValue)
 	//	return; //코드 실행 X
 	//}
 	//
-	//if (IsValid(CurrentWeapon) == false) // 무기를 줍지 않았다면
-	//{
-	//	return; //코드 실행 X
-	//}
+	if (IsValid(CurrentWeapon) == false) // 무기를 줍지 않았다면
+	{
+		return; //코드 실행 X
+	}
 	//
 	//if (IsValid(GetCurrentWeaponAttackAnimMontage()) == false) //애님몽타주가 연결X라면
 	//{

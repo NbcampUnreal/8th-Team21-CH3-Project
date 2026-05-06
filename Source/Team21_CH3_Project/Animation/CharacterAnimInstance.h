@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float GroundSpeed; //걸을때 속력
 
+	UPROPERTY(BlueprintReadOnly)
+	float NormalizedCurrentPitch; //에임오프셋 Pitch
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	uint8 bIsMove : 1; //ABP에서 사용할 Get변수
 
@@ -36,4 +39,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	uint8 bIsUnarmed : 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	uint8 bShouldMove : 1;
 };

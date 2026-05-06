@@ -4,6 +4,8 @@
 #include "Character/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h" //여러 수학적 로직을 가지고있는 Static 클래스
+#include "Character/PlayerCharacter.h"
+#include "Character/NonPlayerCharacter.h"
 
 void UCharacterAnimInstance::NativeInitializeAnimation()
 {
@@ -30,7 +32,18 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsMove = (KINDA_SMALL_NUMBER < GroundSpeed);
 		bIsFalling = OwnerCharacterMovement->IsFalling();
 		bIsUnarmed = OwnerCharacter->GetCurrentWeaponAttackAnimMontage() == nullptr ? true : false;
-	}
+		float GroundAcceleration = UKismetMathLibrary::VSizeXY(OwnerCharacterMovement->GetCurrentAcceleration());
+		bool bIsAccelerated = FMath::IsNearlyZero(GroundAcceleration) == false;
+		bShouldMove = (KINDA_SMALL_NUMBER < GroundSpeed) && (bIsAccelerated == true);
+		if (ANonPlayerCharacter* OwnerNPC = Cast<ANonPlayerCharacter>(OwnerCharacter))
+		{
+			bShouldMove = KINDA_SMALL_NUMBER < GroundSpeed;
+		}
 
-	
+		
+		if (APlayerController* OwnerPlayerController = Cast<APlayerController>(OwnerCharacter->GetController()))
+		{
+			NormalizedCurrentPitch = UKismetMathLibrary::NormalizeAxis(OwnerPlayerController->GetControlRotation().Pitch);
+		}
+	}
 }
