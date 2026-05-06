@@ -26,4 +26,6 @@ public:
 	TObjectPtr<UInputAction> AttackMelee;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UInputAction> Zoom;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInputAction> Dash;
 };

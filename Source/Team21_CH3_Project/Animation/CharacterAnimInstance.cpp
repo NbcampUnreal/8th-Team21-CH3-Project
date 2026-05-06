@@ -45,5 +45,14 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		{
 			NormalizedCurrentPitch = UKismetMathLibrary::NormalizeAxis(OwnerPlayerController->GetControlRotation().Pitch);
 		}
+		bIsDead = OwnerCharacter->IsDead();
+	}
+}
+
+void UCharacterAnimInstance::AnimNotify_PostDead()
+{
+	if (OnPostDead.IsBound() == true)
+	{
+		OnPostDead.Broadcast();
 	}
 }

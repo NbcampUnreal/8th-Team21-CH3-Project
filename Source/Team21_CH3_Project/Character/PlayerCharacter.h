@@ -48,6 +48,8 @@ private:
 
 	void InputStartZoom(const FInputActionValue& InValue);
 	void InputEndZoom(const FInputActionValue& InValue);
+	void InputStartDash(const FInputActionValue& InValue);
+	void InputEndDash(const FInputActionValue& InValue);
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, meta =(AllowPrivateAccess))
@@ -73,5 +75,11 @@ protected:
 		//Field Of View 시야 각
 	float CurrentFOV = 70.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TargetSpeed = 1200.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CurrentSpeed = 500.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CurrentAcceleration = 2048.f;
 #pragma endregion
 };
