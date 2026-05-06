@@ -30,6 +30,7 @@ public:
 
 
 public:
+	UPROPERTY()
 	TObjectPtr<AWeapon> CurrentWeapon;
 
 	static int32 ShowAttackMeleeDebug;
