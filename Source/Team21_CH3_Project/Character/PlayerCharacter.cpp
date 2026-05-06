@@ -18,7 +18,7 @@
 
 APlayerCharacter::APlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
@@ -64,6 +64,14 @@ void APlayerCharacter::BeginPlay()
 	CurrentWeapon = nullptr;
 }
 
+void APlayerCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	CurrentFOV = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaSeconds, 40.f);
+	CameraComp->SetFieldOfView(CurrentFOV);
+}
+
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -77,6 +85,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		CharacterInputComponent->BindAction(CharacterInputConfig->Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		CharacterInputComponent->BindAction(CharacterInputConfig->AttackRanged, ETriggerEvent::Started, this, &ThisClass::InputAttackRanged);
 		CharacterInputComponent->BindAction(CharacterInputConfig->AttackMelee, ETriggerEvent::Started, this, &ThisClass::InputAttackMelee);
+		CharacterInputComponent->BindAction(CharacterInputConfig->Zoom, ETriggerEvent::Started, this, &ThisClass::InputStartZoom);
+		CharacterInputComponent->BindAction(CharacterInputConfig->Zoom, ETriggerEvent::Completed, this, &ThisClass::InputEndZoom);
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent Bind Suceess"));
 	}
 }
@@ -131,6 +141,12 @@ void APlayerCharacter::InputAttackRanged(const FInputActionValue& InValue)
 	//}
 
 	TryFire();
+
+	APlayerController* OwnerPlayerController = Cast<APlayerController>(GetController());
+	if (IsValid(AttackRangedCameraShake) && IsValid(OwnerPlayerController))
+	{
+		OwnerPlayerController->ClientStartCameraShake(AttackRangedCameraShake);
+	}
 }
 
 void APlayerCharacter::InputAttackMelee(const FInputActionValue& InValue)
@@ -244,4 +260,14 @@ void APlayerCharacter::TryFire()
 		}
 
 	}
+}
+
+void APlayerCharacter::InputStartZoom(const FInputActionValue& InValue)
+{
+	TargetFOV = 45.f;
+}
+
+void APlayerCharacter::InputEndZoom(const FInputActionValue& InValue)
+{
+	TargetFOV = 70.f;
 }

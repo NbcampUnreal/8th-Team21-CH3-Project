@@ -24,4 +24,6 @@ public:
 	TObjectPtr<UInputAction> AttackRanged;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UInputAction> AttackMelee;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInputAction> Zoom;
 };

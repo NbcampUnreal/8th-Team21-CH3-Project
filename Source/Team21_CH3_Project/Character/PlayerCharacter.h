@@ -24,6 +24,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
@@ -44,12 +46,32 @@ private:
 	void InputAttackMelee(const FInputActionValue& InValue);
 	void TryFire();
 
+	void InputStartZoom(const FInputActionValue& InValue);
+	void InputEndZoom(const FInputActionValue& InValue);
+
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, meta =(AllowPrivateAccess))
 	TObjectPtr<UInputConfig> CharacterInputConfig;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly,meta =(AllowPrivateAccess))
 	TObjectPtr<UInputMappingContext> CharacterIMC;
+
+#pragma endregion
+
+#pragma region Effect
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UCameraShakeBase> AttackRangedCameraShake;
+
+#pragma endregion 
+
+#pragma region Zoom
+
+protected:
+	float TargetFOV = 70.f;
+		//Field Of View 시야 각
+	float CurrentFOV = 70.f;
 
 #pragma endregion
 };
