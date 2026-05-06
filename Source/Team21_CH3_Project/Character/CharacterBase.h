@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+class AWeapon;
+
 UCLASS()
 class TEAM21_CH3_PROJECT_API ACharacterBase : public ACharacter
 {
@@ -13,4 +15,11 @@ class TEAM21_CH3_PROJECT_API ACharacterBase : public ACharacter
 public:
 	ACharacterBase();
 
+	UAnimMontage* GetCurrentWeaponAttackAnimMontage() const;
+
+
+public:
+	TObjectPtr<AWeapon> CurrentWeapon;
+
+	static int32 ShowAttackRangedDebug;
 };
