@@ -1,6 +1,13 @@
 // OutGameRootWidget.cpp
 #include "OutGameUI/Widget/OutGameRootWidget.h"
 #include "Components/WidgetSwitcher.h"
+#include "OutGameUI/Widget/OutGameTransitionWidget.h"
+
+void UOutGameRootWidget::NativeOnInitialized(){
+	Super::NativeOnInitialized();
+	
+	if (IsValid(TransitionWidget) == true) TransitionWidget->OnFadeOutFinished.AddDynamic(this, &ThisClass::HandleTransitionFadeOutFinished);
+}
 
 void UOutGameRootWidget::ShowMainMenu()
 {
@@ -25,4 +32,25 @@ void UOutGameRootWidget::ShowResult()
 	}
 }
 
+void UOutGameRootWidget::ShowSelectTransition(){
+	if (IsValid(TransitionWidget) == true) TransitionWidget->PlaySelectTransition();
+}
+
+void UOutGameRootWidget::ShowTransition(TFunction<void()> action){
+	pendingTransitionAction = MoveTemp(action);
+	
+	if (IsValid(TransitionWidget) == true) TransitionWidget->PlayFadeOut();
+}
+
+void UOutGameRootWidget::HandleTransitionFadeOutFinished(){
+	if (pendingTransitionAction)
+	{
+		pendingTransitionAction();
+		pendingTransitionAction = nullptr;
+	}
+	if (IsValid(TransitionWidget) == true)
+	{
+		TransitionWidget->PlayFadeIn();
+	}
+}
 

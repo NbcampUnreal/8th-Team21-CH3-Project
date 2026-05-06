@@ -18,10 +18,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "OutGame UI")
 	TSubclassOf<UOutGameRootWidget> RootWidgetClass;
 
-public:
-	UOutGameRootWidget* GetRootWidget() const;
-	
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<UOutGameRootWidget> RootWidgetInstance;
+	
+public:
+	UOutGameRootWidget* GetRootWidget() const;
+	
+	UFUNCTION()
+	void SetViewTargetByTag(FName cameraTag, float blendTime);
 };

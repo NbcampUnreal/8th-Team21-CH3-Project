@@ -5,7 +5,7 @@
 
 #include "Controller/AI_Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Animation/AnimInstance.h"
+#include "Animation/CharacterAnimInstance.h"
 
 ANonPlayerCharacter::ANonPlayerCharacter() : bIsNowAttacking(false)
 {
@@ -34,8 +34,8 @@ void ANonPlayerCharacter::BeginAttack()
 	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 	checkf(IsValid(AnimInstance) == true, TEXT("Invalid AnimInstance"));
 
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	/*if (IsValid(AnimInstance) == true && IsValid(AttackMeleeMontage) == true && AnimInstance->Montage_IsPlaying(AttackMeleeMontage) == false)
+	/*GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	if (IsValid(AnimInstance) == true && IsValid(AttackMeleeMontage) == true && AnimInstance->Montage_IsPlaying(AttackMeleeMontage) == false)
 	{
 		AnimInstance->Montage_Play(AttackMeleeMontage);
 
@@ -49,6 +49,21 @@ void ANonPlayerCharacter::BeginAttack()
 	}
 	*/
 	
+}
+
+float ANonPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	/*if (CurrentHP < KINDA_SMALL_NUMBER)
+	{
+		AAI_Controller* AIController = Cast<AAI_Controller>(GetController());
+		if (IsValid(AIController) == true)
+		{
+			AIController->EndAI();
+		}
+	}*/
+	return FinalDamageAmount;
 }
 
 void ANonPlayerCharacter::EndAttack(UAnimMontage* InMontage, bool bInterruped)

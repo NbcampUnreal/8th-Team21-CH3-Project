@@ -7,7 +7,7 @@
 #include "NonPlayerCharacter.generated.h"
 
 
-DECLARE_DELEGATE_TwoParams(FOnAttackMontageEnded, UAnimMontage*, bool /*bInterrupted*/)
+DECLARE_DELEGATE_TwoParams(FOnAttackMontageEnded, UAnimMontage*, bool bInterrupted)
 /**
  * 
  */
@@ -23,6 +23,7 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 protected:
 	virtual void BeginAttack();
 

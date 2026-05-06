@@ -30,10 +30,32 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> BackButton; 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UButton> BackToMapButton; 
+	TObjectPtr<UButton> BackToMapButton;
 	
 	UFUNCTION()
 	void HandleLevelClicked();
 	UFUNCTION()
 	void HandleBackClicked();
+	
+#pragma region CharacterSelect
+	
+protected:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> characterSelectButton01;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> characterSelectButton02;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> characterConfirmButton;
+	
+	UFUNCTION()
+	void HandleCharacter01Clicked();
+	UFUNCTION()
+	void HandleCharacter02Clicked();
+	UFUNCTION()
+	void HandleConfirmSelectClicked();
+	
+	void HandleCharacterSelectClicked(FName characterId);
+	
+#pragma endregion 
+
 };

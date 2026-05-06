@@ -9,13 +9,7 @@ void AOutGamePlayerController::BeginPlay(){
 	
 	if (!IsLocalController()) return;
 	
-	TArray<AActor*> FoundCameras;
-	UGameplayStatics::GetAllActorsWithTag(this, TEXT("LobbyCamera"), FoundCameras);
-	
-	if (FoundCameras.Num() > 0 && IsValid(FoundCameras[0]))
-	{
-		SetViewTargetWithBlend(FoundCameras[0], 0.0f);
-	}
+	SetViewTargetByTag("LobbyCamera", 0.0f);
 	
 	if (IsValid(RootWidgetClass) == true)
 	{
@@ -26,13 +20,25 @@ void AOutGamePlayerController::BeginPlay(){
 		}
 	}
 	
+	// TODO:Create GameInstance Result / MainMenu Setting 
+	
 	bShowMouseCursor = true;
 	
-	FInputModeUIOnly InputMode;
-	SetInputMode(InputMode);
+	FInputModeUIOnly inputMode;
+	SetInputMode(inputMode);
 }
 
 UOutGameRootWidget* AOutGamePlayerController::GetRootWidget() const{
 	if (IsValid(RootWidgetInstance) == true) return RootWidgetInstance;
 	return nullptr;
+}
+
+void AOutGamePlayerController::SetViewTargetByTag(FName cameraTag, float blendTime){
+	TArray<AActor*> foundCameras;
+	UGameplayStatics::GetAllActorsWithTag(this, cameraTag, foundCameras);
+	
+	if (foundCameras.Num() > 0 && IsValid(foundCameras[0]))
+	{
+		SetViewTargetWithBlend(foundCameras[0], blendTime);
+	}
 }
