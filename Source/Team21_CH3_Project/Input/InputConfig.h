@@ -22,4 +22,6 @@ public:
 	TObjectPtr<UInputAction> Jump;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UInputAction> AttackRanged;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInputAction> AttackMelee;
 };
