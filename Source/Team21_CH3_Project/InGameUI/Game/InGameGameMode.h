@@ -12,4 +12,7 @@
 UCLASS()
 class TEAM21_CH3_PROJECT_API AInGameGameMode : public AGameMode{
 	GENERATED_BODY()
+	
+public:
+	virtual void BeginPlay() override;
 };
