@@ -41,6 +41,7 @@ private:
 	void InputMove(const FInputActionValue& InValue);
 	void InputLook(const FInputActionValue& InValue);
 	void InputAttackRanged(const FInputActionValue& InValue);
+	void InputAttackMelee(const FInputActionValue& InValue);
 	void TryFire();
 
 protected:

@@ -4,6 +4,20 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Item/Weapon.h"
+#include "Animation/CharacterAnimInstance.h"
+#include "Engine/EngineTypes.h"
+#include "Engine/DamageEvents.h"
+#include "Team21_CH3_Project.h"
+#include "Kismet/KismetSystemLibrary.h"
+
+int32 ACharacterBase::ShowAttackMeleeDebug = 0;
+
+FAutoConsoleVariableRef CVarShowAttackMeleeDebug(
+	TEXT("SX.ShowAttackMeleeDebug"),
+	ACharacterBase::ShowAttackMeleeDebug,
+	TEXT(""),
+	ECVF_Cheat
+);
 
 int32 ACharacterBase::ShowAttackRangedDebug = 0;
 
@@ -33,6 +47,36 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->JumpZVelocity = 600.f; // 점프시 튕겨 올라가는 속도
 	GetCharacterMovement()->AirControl = 0.5f; //공중에서 컨트롤 정도
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f; // 이동키를 뗐을때 감속속도
+
+	bIsDead = false;
+}
+
+float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	//부모클래스의 TakDamage가져와서 사용
+	
+	CurrentHP = FMath::Clamp(CurrentHP - FinalDamageAmount, 0.f, MaxHP);
+
+	if (CurrentHP < KINDA_SMALL_NUMBER)
+		// KINDA_SMALL_NUMBER == 0.0001, 0이 아니더라도 0.0001이되면 죽음으로 간주
+		// 0.0f로 하면 컴퓨터가 미세하게 0.000001이렇게 값을 남길때도 있다.
+		// 예기치 못할 오류 방지
+	{
+		bIsDead = true; //GG
+		CurrentHP = 0.f; //현재 체력 0
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// 캡슐컴포넌트 NoCollision으로 설정
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+		// 캐릭터 못움직이게 설정
+	}
+
+	if (1 == ShowAttackMeleeDebug)
+	{
+		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s [%.1f / %.1f]"), *GetName(), CurrentHP, MaxHP));
+	}
+
+	return FinalDamageAmount;
 }
 
 UAnimMontage* ACharacterBase::GetCurrentWeaponAttackAnimMontage() const
@@ -42,6 +86,39 @@ UAnimMontage* ACharacterBase::GetCurrentWeaponAttackAnimMontage() const
 		return CurrentWeapon->GetAttackMontage();
 	}
 	return nullptr;
+}
+
+void ACharacterBase::HandleOnCheckHit()
+{
+	TArray<FHitResult> HitResults;
+
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepMultiByChannel(
+		HitResults,
+		GetActorLocation(),
+		GetActorLocation() + AttackMeleeRange * GetActorForwardVector(),
+		FQuat::Identity,
+		ECC_ATTACK,
+		FCollisionShape::MakeSphere(AttackMeleeRadius),
+		Params
+	);
+
+	if (true == bResult)
+	{
+		if (HitResults.IsEmpty() == false)
+		{
+			for (FHitResult HitResult : HitResults)
+			{
+				if (IsValid(HitResult.GetActor()) == true)
+				{
+					UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
+					FDamageEvent DamageEvent;
+					HitResult.GetActor()->TakeDamage(10.f, DamageEvent, GetController(), this);
+				}
+			}
+		}
+	}
 }
 
 
