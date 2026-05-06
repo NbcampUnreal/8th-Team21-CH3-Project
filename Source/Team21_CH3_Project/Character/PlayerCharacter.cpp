@@ -74,6 +74,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		CharacterInputComponent->BindAction(CharacterInputConfig->Jump, ETriggerEvent::Started, this, &ACharacter::Jump);
 		CharacterInputComponent->BindAction(CharacterInputConfig->Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		CharacterInputComponent->BindAction(CharacterInputConfig->AttackRanged, ETriggerEvent::Started, this, &ThisClass::InputAttackRanged);
+		CharacterInputComponent->BindAction(CharacterInputConfig->AttackMelee, ETriggerEvent::Started, this, &ThisClass::InputAttackMelee);
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent Bind Suceess"));
 	}
 }
@@ -128,6 +129,20 @@ void APlayerCharacter::InputAttackRanged(const FInputActionValue& InValue)
 	//}
 
 	TryFire();
+}
+
+void APlayerCharacter::InputAttackMelee(const FInputActionValue& InValue)
+{
+	if (GetCharacterMovement()->IsFalling() == true)
+	{
+		return;
+	}
+
+	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+	if (IsValid(AnimInstance) == true && IsValid(AttackMeleeMontage) == true && AnimInstance->Montage_IsPlaying(AttackMeleeMontage) == false)
+	{
+		AnimInstance->Montage_Play(AttackMeleeMontage);
+	}
 }
 
 void APlayerCharacter::TryFire()
