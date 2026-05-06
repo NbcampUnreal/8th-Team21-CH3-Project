@@ -16,6 +16,7 @@ class TEAM21_CH3_PROJECT_API AAI_Controller : public AAIController
 {
 	GENERATED_BODY()
 	
+	friend class ANonPlayerCharacter;
 public:
 	AAI_Controller();
 
