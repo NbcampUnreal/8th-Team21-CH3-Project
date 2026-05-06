@@ -27,10 +27,13 @@ void AAmmo::HandleOnPickUp(APlayerCharacter* InPickUpCharacter)
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("Ammo Picked Up!"));
+	AmmoOnPickUp();
 
 	Pickupcomponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
-	Destroy();
+	
 }
+
+
 
 
