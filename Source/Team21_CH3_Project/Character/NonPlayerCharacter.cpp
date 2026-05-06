@@ -34,7 +34,7 @@ void ANonPlayerCharacter::BeginAttack()
 	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 	checkf(IsValid(AnimInstance) == true, TEXT("Invalid AnimInstance"));
 
-	/*GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	if (IsValid(AnimInstance) == true && IsValid(AttackMeleeMontage) == true && AnimInstance->Montage_IsPlaying(AttackMeleeMontage) == false)
 	{
 		AnimInstance->Montage_Play(AttackMeleeMontage);
@@ -47,7 +47,7 @@ void ANonPlayerCharacter::BeginAttack()
 			AnimInstance->Montage_SetEndDelegate(OnAttackMontageEndedDelegate, AttackMeleeMontage);
 		}
 	}
-	*/
+
 	
 }
 
@@ -55,14 +55,14 @@ float ANonPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 {
 	float FinalDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	/*if (CurrentHP < KINDA_SMALL_NUMBER)
+	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
 		AAI_Controller* AIController = Cast<AAI_Controller>(GetController());
 		if (IsValid(AIController) == true)
 		{
 			AIController->EndAI();
 		}
-	}*/
+	}
 	return FinalDamageAmount;
 }
 
