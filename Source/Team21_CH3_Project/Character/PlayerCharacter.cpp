@@ -45,7 +45,7 @@ APlayerCharacter::APlayerCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;
 
-	TimeBetweenFire = 60.f / FirePerMinute; 
+	//TimeBetweenFire = 60.f / FirePerMinute;  
 }
 
 void APlayerCharacter::BeginPlay()
@@ -60,7 +60,7 @@ void APlayerCharacter::BeginPlay()
 		if (IsValid(Subsystem))
 		{
 			Subsystem->AddMappingContext(CharacterIMC, 0);
-			UE_LOG(LogTemp, Warning, TEXT("AddMappingContext Suceess"));
+			//UE_LOG(LogTemp, Warning, TEXT("AddMappingContext Suceess"));
 		}
 	}
 
@@ -98,7 +98,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		CharacterInputComponent->BindAction(CharacterInputConfig->ToggleSelector, ETriggerEvent::Started, this, &ThisClass::InputToggleSelector);
 		CharacterInputComponent->BindAction(CharacterInputConfig->AttackRanged, ETriggerEvent::Started, this, &ThisClass::InputStartFullAutoFire);
 		CharacterInputComponent->BindAction(CharacterInputConfig->AttackRanged, ETriggerEvent::Completed, this, &ThisClass::InputStopFullAutoFire);
-		UE_LOG(LogTemp, Warning, TEXT("InputComponent Bind Suceess"));
+		//UE_LOG(LogTemp, Warning, TEXT("InputComponent Bind Suceess"));
 	}
 }
 
@@ -181,6 +181,7 @@ void APlayerCharacter::InputAttackMelee(const FInputActionValue& InValue)
 
 void APlayerCharacter::TryFire()
 {
+	//UE_LOG(LogTemp, Warning, TEXT("TryFire at: %f"), GetWorld()->GetTimeSeconds());
 	APlayerController* PlayerController = GetController<APlayerController>();
 	if (IsValid(PlayerController) == true)
 	{
@@ -274,7 +275,9 @@ void APlayerCharacter::TryFire()
 		{
 			if (AnimInstance->Montage_IsPlaying(GetCurrentWeaponAttackAnimMontage()) == false)
 			{
-				AnimInstance->Montage_Play(GetCurrentWeaponAttackAnimMontage());
+				float MontageLength = GetCurrentWeaponAttackAnimMontage()->GetPlayLength();
+				float PlayRate = MontageLength / (60.f / FirePerMinute);
+				AnimInstance->Montage_Play(GetCurrentWeaponAttackAnimMontage(), PlayRate);
 			}
 		}
 
@@ -317,7 +320,12 @@ void APlayerCharacter::InputStartFullAutoFire(const FInputActionValue& InValue)
 {
 	if (true == bIsFullAutoFire)
 	{
-		GetWorldTimerManager().SetTimer(FullAutoTimerHandle, this, &ThisClass::TryFire, TimeBetweenFire, true);
+		if (GetWorldTimerManager().IsTimerActive(FullAutoTimerHandle) == false)
+		{
+			float TimeBetweenFire = 60.f / FirePerMinute;
+			//UE_LOG(LogTemp, Warning, TEXT("TimeBetweenFire: %f, FirePerMinute: %f"), TimeBetweenFire, FirePerMinute);
+			GetWorldTimerManager().SetTimer(FullAutoTimerHandle, this, &ThisClass::TryFire, TimeBetweenFire, true);
+		}
 	}
 }
 
