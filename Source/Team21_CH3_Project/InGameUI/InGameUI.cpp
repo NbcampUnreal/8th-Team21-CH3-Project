@@ -11,7 +11,7 @@ void UInGameUI::NativeConstruct()
 	Super::NativeConstruct();
 
 	// UI가 화면에 처음 생성될 때 보여줄 기본값 세팅
-	UpdateHealth(100.f, 100.f);
+	UpdateHealth(50.f, 100.f);
 	UpdateAmmo(30, 30);
 
 	// 처음에 0점, 1라운드로 보이게 초기화
@@ -20,10 +20,16 @@ void UInGameUI::NativeConstruct()
 
 void UInGameUI::UpdateHealth(float CurrentHealth, float MaxHealth)
 {
-	if (HealthBar && MaxHealth > 0.f)
+	if (!HealthBar) return;
+	if (MaxHealth <= 0.f)
 	{
-		HealthBar->SetPercent(CurrentHealth / MaxHealth);
+		HealthBar->SetPercent(0.f);
+		return;
 	}
+
+	float SafeHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
+
+	HealthBar->SetPercent(SafeHealth / MaxHealth);
 }
 
 void UInGameUI::UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo)
