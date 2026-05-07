@@ -19,3 +19,11 @@ void AInGameHUD::BeginPlay()
 		}
 	}
 }
+
+void AInGameHUD::RefreshMatchUI(int32 PlayerScore, int32 AIScore, int32 Round)
+{
+	if (InGameUIInstance)
+	{
+		InGameUIInstance->UpdateMatchInfo(PlayerScore, AIScore, Round);
+	}
+}

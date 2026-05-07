@@ -14,6 +14,10 @@ class TEAM21_CH3_PROJECT_API AInGameHUD : public AHUD
 {
 	GENERATED_BODY()
 
+public:
+	// 게임 모드에서 호출할 UI 갱신 명령 함수
+	void RefreshMatchUI(int32 PlayerScore, int32 AIScore, int32 Round);
+
 protected:
 	virtual void BeginPlay() override;
 
