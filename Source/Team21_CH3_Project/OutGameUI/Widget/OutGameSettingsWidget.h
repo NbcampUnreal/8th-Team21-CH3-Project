@@ -10,6 +10,7 @@ class USlider;
 class UComboBoxString;
 class USoundMix;
 class USoundClass;
+class UTextBlock;
 
 UCLASS()
 class TEAM21_CH3_PROJECT_API UOutGameSettingsWidget : public UOutGameWidgetBase{
@@ -21,6 +22,8 @@ public:
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USlider> mouseSensitivitySlider; 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> mouseSensitivityText;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UComboBoxString> graphicsQualityComboBox;
 	UPROPERTY()
@@ -44,6 +47,8 @@ private:
 	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USlider> masterVolumeSlider;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> masterVolumeText;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	TObjectPtr<USoundClass> masterSoundClass;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")

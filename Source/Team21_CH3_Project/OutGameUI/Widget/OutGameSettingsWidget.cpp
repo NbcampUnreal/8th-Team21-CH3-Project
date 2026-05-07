@@ -3,6 +3,7 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/Slider.h"
+#include "Components/TextBlock.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundMix.h"
@@ -10,6 +11,7 @@
 #include "Game/TeamGameInstance.h"
 #include "OutGameUI/Widget/OutGameRootWidget.h"
 #include "OutGameUI/Controller/OutGamePlayerController.h"
+
 
 void UOutGameSettingsWidget::NativeOnInitialized(){
 	Super::NativeOnInitialized();
@@ -31,6 +33,8 @@ void UOutGameSettingsWidget::HandleMouseSensitivityChanged(float value){
 			TeamGameInstance->SetMouseSensitivity(value);
 		}
 	}
+	
+	mouseSensitivityText->SetText(FText::FromString(FString::Printf(TEXT("%.1f"), value)));
 }
 
 void UOutGameSettingsWidget::HandleMasterVolumeChanged(float value){
@@ -43,6 +47,8 @@ void UOutGameSettingsWidget::HandleMasterVolumeChanged(float value){
 		0.0f,
 		true
 		);
+	
+	masterVolumeText->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), value)));
 }
 
 void UOutGameSettingsWidget::HandleGraphicsQualityChanged(FString selectedItem, ESelectInfo::Type selectionType){
