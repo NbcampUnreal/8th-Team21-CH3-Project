@@ -97,7 +97,7 @@ public:
 		//연발 상태인가?	
 	FTimerHandle FullAutoTimerHandle;
 		// 타이머 핸들 변수 선언
-	float TimeBetweenFire;
+	//float TimeBetweenFire;
 		// 발사 간 타이밍
 #pragma endregion
 };
