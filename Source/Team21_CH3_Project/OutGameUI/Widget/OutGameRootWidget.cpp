@@ -25,10 +25,17 @@ void UOutGameRootWidget::ShowMissionSelect()
 	}
 }
 
+void UOutGameRootWidget::ShowSettings(){
+	if (IsValid(ScreenSwitcher) == true)
+	{
+		ScreenSwitcher->SetActiveWidgetIndex(2);
+	}
+}
+
 void UOutGameRootWidget::ShowResult()
 {
 	if (IsValid(ScreenSwitcher) == true)	{
-		ScreenSwitcher->SetActiveWidgetIndex(2);
+		ScreenSwitcher->SetActiveWidgetIndex(3);
 	}
 }
 

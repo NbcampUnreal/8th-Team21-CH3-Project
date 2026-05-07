@@ -7,8 +7,9 @@
 
 class UButton;
 class UWidgetSwitcher;
+class AOutGameCharacterPreviewManager;
 
-UCLASS(Abstract, Blueprintable)
+UCLASS()
 class TEAM21_CH3_PROJECT_API UOutGameMissionSelectWidget : public UOutGameWidgetBase{
 	GENERATED_BODY()
 	
@@ -38,6 +39,9 @@ protected:
 	void HandleBackClicked();
 	
 #pragma region CharacterSelect
+	
+public:
+	AOutGameCharacterPreviewManager* GetPreviewManager() const;
 	
 protected:
 	UPROPERTY(meta = (BindWidget))

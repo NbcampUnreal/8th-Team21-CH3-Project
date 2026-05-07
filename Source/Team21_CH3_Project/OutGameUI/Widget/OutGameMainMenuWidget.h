@@ -27,10 +27,14 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> PlayButton;
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> SettingsButton;
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> QuitButton;
 	
 	UFUNCTION()
 	void HandlePlayClicked();
+	UFUNCTION()
+	void HandleSettingsClicked();
 	UFUNCTION()
 	void HandleQuitClicked();
 };

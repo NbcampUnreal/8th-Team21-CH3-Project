@@ -1,0 +1,61 @@
+// TeamGameInstance.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Engine/GameInstance.h"
+#include "TeamGameInstance.generated.h"
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8{
+	Rifle UMETA(DisplayName = "Rifle"),
+	Shotgun UMETA(DisplayName = "Shotgun"),
+	Pistol UMETA(DisplayName = "Pistol")
+};
+
+UCLASS(BlueprintType)
+class TEAM21_CH3_PROJECT_API UTeamGameInstance : public UGameInstance{
+	GENERATED_BODY()
+	
+public:
+	UTeamGameInstance();
+
+	UFUNCTION(BlueprintPure, Category = "Team Game Instance|Weapon")
+	EWeaponType GetSelectedWeaponType() const;
+	UFUNCTION(BlueprintCallable, Category = "Team Game Instance|Weapon")
+	void SetSelectedWeaponType(EWeaponType weaponType);
+
+	UFUNCTION(BlueprintPure, Category = "Team Game Instance|Settings")
+	float GetMouseSensitivity() const;
+	UFUNCTION(BlueprintCallable, Category = "Team Game Instance|Settings")
+	void SetMouseSensitivity(float value);
+
+	UFUNCTION(BlueprintPure, Category = "Team Game Instance|Settings")
+	float GetMasterVolume() const;
+	UFUNCTION(BlueprintCallable, Category = "Team Game Instance|Settings")
+	void SetMasterVolume(float value);
+
+	UFUNCTION(BlueprintPure, Category = "Team Game Instance|Record")
+	int32 GetPlayerTotalKillCount() const;
+	UFUNCTION(BlueprintCallable, Category = "Team Game Instance|Record")
+	void SetPlayerTotalKillCount(int32 killCount);
+	UFUNCTION(BlueprintCallable, Category = "Team Game Instance|Record")
+	void AddPlayerKillCount(int32 killCount = 1);
+
+	UFUNCTION(BlueprintPure, Category = "Team Game Instance|Result")
+	bool GetIsWin() const;
+	UFUNCTION(BlueprintCallable, Category = "Team Game Instance|Result")
+	void SetIsWin(bool bNewIsWin);
+
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Team Game Instance|Weapon", meta = (AllowPrivateAccess = "true"))
+	EWeaponType selectedWeaponType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Team Game Instance|Settings", meta = (AllowPrivateAccess = "true"))
+	float mouseSensitivity;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Team Game Instance|Settings", meta = (AllowPrivateAccess = "true"))
+	float masterVolume;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Team Game Instance|Record", meta = (AllowPrivateAccess = "true"))
+	int32 playerTotalKillCount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Team Game Instance|Result", meta = (AllowPrivateAccess = "true"))
+	bool bIsWin;
+};
