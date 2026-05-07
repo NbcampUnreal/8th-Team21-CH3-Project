@@ -7,6 +7,7 @@
 
 class AWeapon;
 class UAnimMontage;
+class UStatusComponent;
 
 UCLASS()
 class TEAM21_CH3_PROJECT_API ACharacterBase : public ACharacter
@@ -15,6 +16,8 @@ class TEAM21_CH3_PROJECT_API ACharacterBase : public ACharacter
 
 public:
 	ACharacterBase();
+
+	virtual void BeginPlay() override;
 
 	virtual float TakeDamage(
 		float DamageAmount, //데미지 세기
@@ -50,26 +53,36 @@ protected:
 #pragma region HP
 
 public:
-	float GetMaxHP() const { return MaxHP; }
-		//Getter MaxHP
-	float GetCurrentHP() const { return CurrentHP; }
-		//Getter CurrentHP
-	void SetMaxHP(float InMaxHP) { MaxHP = InMaxHP; }
-		//Setter MaxHP
-	void SetCurrentHP(float InCurrentHP) { CurrentHP = InCurrentHP; }
-		//Setter CurrenHP
-	bool IsDead() const { return bIsDead; }
-		//죽었는가?(CurrentHP가 0이 되었는가?)
+	//float GetMaxHP() const { return MaxHP; }
+	//	//Getter MaxHP
+	//float GetCurrentHP() const { return CurrentHP; }
+	//	//Getter CurrentHP
+	//void SetMaxHP(float InMaxHP) { MaxHP = InMaxHP; }
+	//	//Setter MaxHP
+	//void SetCurrentHP(float InCurrentHP) { CurrentHP = InCurrentHP; }
+	//	//Setter CurrenHP
+	//bool IsDead() const { return bIsDead; }
+	//	//죽었는가?(CurrentHP가 0이 되었는가?)
+
+	UStatusComponent* GetStatusComponent() const { return StatusComponent; }
+
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float MaxHP = 100.f;
+	UFUNCTION()
+	virtual void HandleOnPostCharacterDead(); //개릭터 사망 후 로직
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float CurrentHP = 100.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	uint8 bIsDead : 1;
+protected:
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//float MaxHP = 100.f;
+	//
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//float CurrentHP = 100.f;
+	//
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//uint8 bIsDead : 1;
 		//사용메모리 1바이트
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess))
+	TObjectPtr<UStatusComponent> StatusComponent;
 
 
 #pragma endregion

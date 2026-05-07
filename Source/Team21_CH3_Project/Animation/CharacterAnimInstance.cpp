@@ -6,6 +6,7 @@
 #include "Kismet/KismetMathLibrary.h" //여러 수학적 로직을 가지고있는 Static 클래스
 #include "Character/PlayerCharacter.h"
 #include "Character/NonPlayerCharacter.h"
+#include "Component/StatusComponent.h"
 
 void UCharacterAnimInstance::NativeInitializeAnimation()
 {
@@ -45,5 +46,18 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		{
 			NormalizedCurrentPitch = UKismetMathLibrary::NormalizeAxis(OwnerPlayerController->GetControlRotation().Pitch);
 		}
+		//bIsDead = OwnerCharacter->IsDead();
+		if (IsValid(OwnerCharacter->GetStatusComponent()) == true)
+		{
+			bIsDead = OwnerCharacter->GetStatusComponent()->IsDead();
+		}
+	}
+}
+
+void UCharacterAnimInstance::AnimNotify_PostDead()
+{
+	if (OnPostDead.IsBound() == true)
+	{
+		OnPostDead.Broadcast();
 	}
 }

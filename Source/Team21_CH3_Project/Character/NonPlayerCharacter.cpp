@@ -6,6 +6,7 @@
 #include "Controller/AI_Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/CharacterAnimInstance.h"
+#include "Component/StatusComponent.h"
 
 ANonPlayerCharacter::ANonPlayerCharacter() : bIsNowAttacking(false)
 {
@@ -55,7 +56,8 @@ float ANonPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 {
 	float FinalDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	if (CurrentHP < KINDA_SMALL_NUMBER)
+	//if (CurrentHP < KINDA_SMALL_NUMBER)
+	if (StatusComponent->IsDead() == true)
 	{
 		AAI_Controller* AIController = Cast<AAI_Controller>(GetController());
 		if (IsValid(AIController) == true)

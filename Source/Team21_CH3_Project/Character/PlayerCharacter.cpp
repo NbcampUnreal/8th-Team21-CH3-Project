@@ -9,16 +9,18 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Item/Weapon.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Component/PickupComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/DamageEvents.h"
 #include "Team21_CH3_Project.h"
+#include "Animation/CharacterAnimInstance.h"
 
 
 
 APlayerCharacter::APlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
@@ -27,11 +29,11 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->TargetArmLength = 400.f;
+	SpringArmComp->TargetArmLength = 550.f;
 	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->bInheritPitch = true;
 	SpringArmComp->bInheritYaw = true;
@@ -64,6 +66,17 @@ void APlayerCharacter::BeginPlay()
 	CurrentWeapon = nullptr;
 }
 
+void APlayerCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	CurrentFOV = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaSeconds, 40.f);
+	CameraComp->SetFieldOfView(CurrentFOV);
+	 
+	//CurrentSpeed = FMath::FInterpTo(CurrentSpeed, TargetSpeed, DeltaSeconds, 20.f);
+	//GetCharacterMovement()->MaxWalkSpeed = CurrentSpeed;
+}
+
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -77,6 +90,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		CharacterInputComponent->BindAction(CharacterInputConfig->Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		CharacterInputComponent->BindAction(CharacterInputConfig->AttackRanged, ETriggerEvent::Started, this, &ThisClass::InputAttackRanged);
 		CharacterInputComponent->BindAction(CharacterInputConfig->AttackMelee, ETriggerEvent::Started, this, &ThisClass::InputAttackMelee);
+		CharacterInputComponent->BindAction(CharacterInputConfig->Zoom, ETriggerEvent::Started, this, &ThisClass::InputStartZoom);
+		CharacterInputComponent->BindAction(CharacterInputConfig->Zoom, ETriggerEvent::Completed, this, &ThisClass::InputEndZoom);
+		CharacterInputComponent->BindAction(CharacterInputConfig->Dash, ETriggerEvent::Started, this, &ThisClass::InputStartDash);
+		CharacterInputComponent->BindAction(CharacterInputConfig->Dash, ETriggerEvent::Completed, this, &ThisClass::InputEndDash);
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent Bind Suceess"));
 	}
 }
@@ -131,16 +148,23 @@ void APlayerCharacter::InputAttackRanged(const FInputActionValue& InValue)
 	//}
 
 	TryFire();
+
+	APlayerController* OwnerPlayerController = Cast<APlayerController>(GetController());
+	if (IsValid(AttackRangedCameraShake) && IsValid(OwnerPlayerController))
+	{
+		OwnerPlayerController->ClientStartCameraShake(AttackRangedCameraShake);
+	}
 }
 
 void APlayerCharacter::InputAttackMelee(const FInputActionValue& InValue)
 {
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Attack()")));
 	if (GetCharacterMovement()->IsFalling() == true)
 	{
 		return;
 	}
-
-	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+	
+	UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 	if (IsValid(AnimInstance) == true && IsValid(AttackMeleeMontage) == true && AnimInstance->Montage_IsPlaying(AttackMeleeMontage) == false)
 	{
 		AnimInstance->Montage_Play(AttackMeleeMontage);
@@ -244,4 +268,26 @@ void APlayerCharacter::TryFire()
 		}
 
 	}
+}
+
+void APlayerCharacter::InputStartZoom(const FInputActionValue& InValue)
+{
+	TargetFOV = 45.f;
+}
+
+void APlayerCharacter::InputEndZoom(const FInputActionValue& InValue)
+{
+	TargetFOV = 70.f;
+}
+
+void APlayerCharacter::InputStartDash(const FInputActionValue& InValue)
+{
+	GetCharacterMovement()->MaxWalkSpeed = TargetSpeed;
+	GetCharacterMovement()->MaxAcceleration = 5000.f;
+}
+
+void APlayerCharacter::InputEndDash(const FInputActionValue& InValue)
+{
+	GetCharacterMovement()->MaxWalkSpeed = CurrentSpeed;
+	GetCharacterMovement()->MaxAcceleration = CurrentAcceleration;
 }

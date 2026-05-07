@@ -26,6 +26,9 @@ protected:
 	UFUNCTION()
 	void HandleOnPickUp(APlayerCharacter* InPickUpCharacter);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
+	void AmmoOnPickUp();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UPickupComponent> Pickupcomponent;
