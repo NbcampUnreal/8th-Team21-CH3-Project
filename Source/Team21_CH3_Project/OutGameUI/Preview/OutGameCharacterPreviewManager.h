@@ -19,9 +19,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Preview")
 	void ShowCharacter(FName character);
+
+	UFUNCTION(BlueprintCallable, Category = "Preview")
+	void ClearPreviewCharacter();
 	
-private:
 	void ClearCurrentCharacter();
+private:
 	void PlayAnimation();
 	
 	UPROPERTY(EditAnywhere, Category = "Preview")
@@ -32,7 +35,6 @@ private:
 	TObjectPtr<USplineComponent> currentSpline;
 	UPROPERTY()
 	TObjectPtr<UAnimSequence> currentAnim;
-
 	
 	int32 currentPreviewIndex;
 	float currentSplineDistance = 0.0f;

@@ -19,10 +19,13 @@ public:
 	void ShowMainMenu();
 	UFUNCTION(BlueprintCallable, Category = "OutGame UI")
 	void ShowMissionSelect();
+	UFUNCTION(Blueprintable, Category = "OutGame UI")
+	void ShowSettings();
 	UFUNCTION(BlueprintCallable, Category = "OutGame UI")
 	void ShowResult();
 	UFUNCTION(BlueprintCallable, Category = "OutGame UI")
 	void ShowSelectTransition();
+
 
 	void ShowTransition(TFunction<void()> action);
 
