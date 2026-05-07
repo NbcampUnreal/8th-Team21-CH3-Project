@@ -2,6 +2,7 @@
 #include "OutGameUI/Widget/OutGameRootWidget.h"
 #include "Components/WidgetSwitcher.h"
 #include "OutGameUI/Widget/OutGameTransitionWidget.h"
+#include "OutGameUI/Widget/UOutGameCommonHeaderWidget.h"
 
 void UOutGameRootWidget::NativeOnInitialized(){
 	Super::NativeOnInitialized();
@@ -9,33 +10,11 @@ void UOutGameRootWidget::NativeOnInitialized(){
 	if (IsValid(TransitionWidget) == true) TransitionWidget->OnFadeOutFinished.AddDynamic(this, &ThisClass::HandleTransitionFadeOutFinished);
 }
 
-void UOutGameRootWidget::ShowMainMenu()
+void UOutGameRootWidget::ShowWidget(EOutGameWidgetType widgetType)
 {
 	if (IsValid(ScreenSwitcher) == true)
 	{
-		ScreenSwitcher->SetActiveWidgetIndex(0);
-	}
-}
-
-void UOutGameRootWidget::ShowMissionSelect()
-{
-	if (IsValid(ScreenSwitcher) == true)
-	{
-		ScreenSwitcher->SetActiveWidgetIndex(1);
-	}
-}
-
-void UOutGameRootWidget::ShowSettings(){
-	if (IsValid(ScreenSwitcher) == true)
-	{
-		ScreenSwitcher->SetActiveWidgetIndex(2);
-	}
-}
-
-void UOutGameRootWidget::ShowResult()
-{
-	if (IsValid(ScreenSwitcher) == true)	{
-		ScreenSwitcher->SetActiveWidgetIndex(3);
+		ScreenSwitcher->SetActiveWidgetIndex(int32(widgetType));
 	}
 }
 
@@ -49,6 +28,13 @@ void UOutGameRootWidget::ShowTransition(TFunction<void()> action){
 	if (IsValid(TransitionWidget) == true) TransitionWidget->PlayFadeOut();
 }
 
+void UOutGameRootWidget::SetHeaderVisible(bool bVisible){
+	if (IsValid(commonHeaderWidget) == true)
+	{
+		commonHeaderWidget->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	}
+}
+
 void UOutGameRootWidget::HandleTransitionFadeOutFinished(){
 	if (pendingTransitionAction)
 	{
@@ -60,4 +46,6 @@ void UOutGameRootWidget::HandleTransitionFadeOutFinished(){
 		TransitionWidget->PlayFadeIn();
 	}
 }
+
+
 

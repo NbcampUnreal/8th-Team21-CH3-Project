@@ -10,6 +10,7 @@ class USlider;
 class UComboBoxString;
 class USoundMix;
 class USoundClass;
+class UTextBlock;
 
 UCLASS()
 class TEAM21_CH3_PROJECT_API UOutGameSettingsWidget : public UOutGameWidgetBase{
@@ -22,13 +23,13 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USlider> mouseSensitivitySlider; 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> mouseSensitivityText;
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UComboBoxString> graphicsQualityComboBox;
 	UPROPERTY()
 	float pendingGraphicsQuality;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> applyButton;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UButton> backButton;
 	
 	UFUNCTION()
 	void HandleMouseSensitivityChanged(float value);
@@ -37,13 +38,13 @@ private:
 	void HandleGraphicsQualityChanged(FString selectedItem, ESelectInfo::Type selectionType);
 	UFUNCTION()
 	void HandleApplyClicked();
-	UFUNCTION()
-	void HandleBackClicked();
 	
 #pragma region sound
 	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USlider> masterVolumeSlider;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> masterVolumeText;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	TObjectPtr<USoundClass> masterSoundClass;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
