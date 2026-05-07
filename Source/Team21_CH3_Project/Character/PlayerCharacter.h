@@ -42,14 +42,18 @@ protected:
 private:
 	void InputMove(const FInputActionValue& InValue);
 	void InputLook(const FInputActionValue& InValue);
+
 	void InputAttackRanged(const FInputActionValue& InValue);
 	void InputAttackMelee(const FInputActionValue& InValue);
 	void TryFire();
-
 	void InputStartZoom(const FInputActionValue& InValue);
 	void InputEndZoom(const FInputActionValue& InValue);
 	void InputStartDash(const FInputActionValue& InValue);
 	void InputEndDash(const FInputActionValue& InValue);
+	void InputToggleSelector(const FInputActionValue& InValue);
+	void InputStartFullAutoFire(const FInputActionValue& InValue);
+	void InputStopFullAutoFire(const FInputActionValue& InValue);
+
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, meta =(AllowPrivateAccess))
@@ -81,5 +85,19 @@ protected:
 	float CurrentSpeed = 500.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurrentAcceleration = 2048.f;
+#pragma endregion
+
+#pragma region Selector
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float FirePerMinute = 600;
+		//분당 발사
+	bool bIsFullAutoFire = false;
+		//연발 상태인가?	
+	FTimerHandle FullAutoTimerHandle;
+		// 타이머 핸들 변수 선언
+	float TimeBetweenFire;
+		// 발사 간 타이밍
 #pragma endregion
 };

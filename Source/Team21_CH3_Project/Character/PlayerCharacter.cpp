@@ -45,6 +45,7 @@ APlayerCharacter::APlayerCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;
 
+	TimeBetweenFire = 60.f / FirePerMinute; 
 }
 
 void APlayerCharacter::BeginPlay()
@@ -52,7 +53,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-
+	 
 	if (IsValid(PlayerController))
 	{
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
@@ -70,7 +71,7 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	CurrentFOV = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaSeconds, 40.f);
+	CurrentFOV = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaSeconds, 25.f);
 	CameraComp->SetFieldOfView(CurrentFOV);
 	 
 	//CurrentSpeed = FMath::FInterpTo(CurrentSpeed, TargetSpeed, DeltaSeconds, 20.f);
@@ -94,6 +95,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		CharacterInputComponent->BindAction(CharacterInputConfig->Zoom, ETriggerEvent::Completed, this, &ThisClass::InputEndZoom);
 		CharacterInputComponent->BindAction(CharacterInputConfig->Dash, ETriggerEvent::Started, this, &ThisClass::InputStartDash);
 		CharacterInputComponent->BindAction(CharacterInputConfig->Dash, ETriggerEvent::Completed, this, &ThisClass::InputEndDash);
+		CharacterInputComponent->BindAction(CharacterInputConfig->ToggleSelector, ETriggerEvent::Started, this, &ThisClass::InputToggleSelector);
+		CharacterInputComponent->BindAction(CharacterInputConfig->AttackRanged, ETriggerEvent::Started, this, &ThisClass::InputStartFullAutoFire);
+		CharacterInputComponent->BindAction(CharacterInputConfig->AttackRanged, ETriggerEvent::Completed, this, &ThisClass::InputStopFullAutoFire);
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent Bind Suceess"));
 	}
 }
@@ -122,22 +126,22 @@ void APlayerCharacter::InputLook(const FInputActionValue& InValue)
 
 void APlayerCharacter::InputAttackRanged(const FInputActionValue& InValue)
 {
-	//if (0.f < GetCharacterMovement()->Velocity.Size())
-	//	//캐릭터의 속도(벡터의 크기)가 0이상이면 -> 움직이고 있다면
-	//{
-	//	return; //코드 실행 X
-	//}
-	//
+	if (0.f < GetCharacterMovement()->Velocity.Size())
+		//캐릭터의 속도(벡터의 크기)가 0이상이면 -> 움직이고 있다면
+	{
+		return; //코드 실행 X
+	}
+	
 	if (IsValid(CurrentWeapon) == false) // 무기를 줍지 않았다면
 	{
 		return; //코드 실행 X
 	}
-	//
-	//if (IsValid(GetCurrentWeaponAttackAnimMontage()) == false) //애님몽타주가 연결X라면
-	//{
-	//	return; //코드 실행 X
-	//}
-	//
+	
+	if (IsValid(GetCurrentWeaponAttackAnimMontage()) == false) //애님몽타주가 연결X라면
+	{
+		return; //코드 실행 X
+	}
+	
 	//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance(); //현재 클래스의 메시(캐릭터)의 애님인스턴스
 	//if (IsValid(AnimInstance) == true) //가 있다면
 	//{
@@ -147,18 +151,22 @@ void APlayerCharacter::InputAttackRanged(const FInputActionValue& InValue)
 	//	}
 	//}
 
-	TryFire();
+	//APlayerController* OwnerPlayerController = Cast<APlayerController>(GetController());
+	//if (IsValid(AttackRangedCameraShake) && IsValid(OwnerPlayerController))
+	//{
+	//	OwnerPlayerController->ClientStartCameraShake(AttackRangedCameraShake);
+	//}
 
-	APlayerController* OwnerPlayerController = Cast<APlayerController>(GetController());
-	if (IsValid(AttackRangedCameraShake) && IsValid(OwnerPlayerController))
+	if (false == bIsFullAutoFire)
 	{
-		OwnerPlayerController->ClientStartCameraShake(AttackRangedCameraShake);
+		TryFire();
 	}
+
 }
 
 void APlayerCharacter::InputAttackMelee(const FInputActionValue& InValue)
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Attack()")));
+	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Attack()")));
 	if (GetCharacterMovement()->IsFalling() == true)
 	{
 		return;
@@ -200,10 +208,13 @@ void APlayerCharacter::TryFire()
 
 			DrawDebugSphere(GetWorld(), FinalFocalLocation, 2.f, 16, FColor::Magenta, false, 60.f);
 
+			// (WeaponLoc - FocalLoc)
 			DrawDebugLine(GetWorld(), FocalLocation, WeaponMuzzleLocation, FColor::Yellow, false, 60.f, 0, 2.f);
 
+			// AimDir
 			DrawDebugLine(GetWorld(), CameraLocation, FinalFocalLocation, FColor::Blue, false, 60.f, 0, 2.f);
 
+			// Project Direction Line
 			DrawDebugLine(GetWorld(), WeaponMuzzleLocation, FinalFocalLocation, FColor::Red, false, 60.f, 0, 2.f);
 		}
 
@@ -267,8 +278,13 @@ void APlayerCharacter::TryFire()
 			}
 		}
 
+		if (IsValid(AttackRangedCameraShake) == true)
+		{
+			PlayerController->ClientStartCameraShake(AttackRangedCameraShake);
+		}
 	}
 }
+
 
 void APlayerCharacter::InputStartZoom(const FInputActionValue& InValue)
 {
@@ -290,4 +306,25 @@ void APlayerCharacter::InputEndDash(const FInputActionValue& InValue)
 {
 	GetCharacterMovement()->MaxWalkSpeed = CurrentSpeed;
 	GetCharacterMovement()->MaxAcceleration = CurrentAcceleration;
+}
+
+void APlayerCharacter::InputToggleSelector(const FInputActionValue& InValue)
+{
+	bIsFullAutoFire = !bIsFullAutoFire;
+}
+
+void APlayerCharacter::InputStartFullAutoFire(const FInputActionValue& InValue)
+{
+	if (true == bIsFullAutoFire)
+	{
+		GetWorldTimerManager().SetTimer(FullAutoTimerHandle, this, &ThisClass::TryFire, TimeBetweenFire, true);
+	}
+}
+
+void APlayerCharacter::InputStopFullAutoFire(const FInputActionValue& InValue)
+{
+	if (true == bIsFullAutoFire)
+	{
+		GetWorldTimerManager().ClearTimer(FullAutoTimerHandle);
+	}
 }
