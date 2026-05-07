@@ -19,6 +19,8 @@ class TEAM21_CH3_PROJECT_API UInGameUI : public UUserWidget
 public:
 	void UpdateHealth(float CurrentHealth, float MaxHealth);
 	void UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo);
+	void UpdateMatchInfo(int32 PlayerScore, int32 AIScore, int32 Round);
+
 
 protected:
 	virtual void NativeConstruct() override;
@@ -34,4 +36,13 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UImage* CrosshairImage;
 	
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* PlayerScoreText;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* AIScoreText;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* RoundText;
+
 };

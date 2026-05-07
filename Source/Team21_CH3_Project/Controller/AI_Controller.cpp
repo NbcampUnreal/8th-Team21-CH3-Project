@@ -10,6 +10,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+
 const float AAI_Controller::PatrolRadius(2000.f);
 int32 AAI_Controller::ShowAIDebug(0);
 const FName AAI_Controller::StartPatrolPositionKey(TEXT("StartPatrolPosition"));
@@ -27,6 +28,32 @@ AAI_Controller::AAI_Controller()
 {
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 	BrainComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BrainComponent"));
+	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
+	SetPerceptionComponent(*AIPerception);
+
+
+	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
+	SightConfig->SightRadius = 3000.f;
+	SightConfig->LoseSightRadius = 3500.f;
+	SightConfig->PeripheralVisionAngleDegrees = 90.f;
+	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
+	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+
+	AIPerception->ConfigureSense(*SightConfig);
+	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
+
+	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
+	HearingConfig->HearingRange = 500.f;
+	HearingConfig->DetectionByAffiliation.bDetectEnemies = true;
+	HearingConfig->DetectionByAffiliation.bDetectFriendlies = true;
+	HearingConfig->DetectionByAffiliation.bDetectNeutrals = true;
+
+	AIPerception->ConfigureSense(*HearingConfig);
+
+	//DamageSenseConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageConfig"));
+	
+	AIPerception->OnPerceptionUpdated.AddDynamic(this, &AAI_Controller::OnPerceptionUpdated);
 }
 
 void AAI_Controller::BeginPlay()
@@ -78,4 +105,25 @@ void AAI_Controller::EndAI()
 		}
 	}
 
+}
+
+void AAI_Controller::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+{
+	for (AActor* Actor : UpdatedActors)
+	{
+		FActorPerceptionBlueprintInfo Info;
+		AIPerception->GetActorsPerception(Actor, Info);
+
+		if (Info.LastSensedStimuli.Num() > 0)
+		{
+			if (Info.LastSensedStimuli[0].WasSuccessfullySensed())
+			{
+				UE_LOG(LogTemp, Log, TEXT("Actor Detected: %s"), *Actor->GetName());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("Actor Lost: %s"), *Actor->GetName());
+			}
+		}
+	}
 }

@@ -22,6 +22,9 @@ protected:
 	
 	void GiveRandomItem(AActor* TargetActor);
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UStaticMeshComponent* Boxcomponent;
+
 	UPROPERTY(EditAnywhere, Category = "Settings")
 	bool bIsOpened = false;
 };

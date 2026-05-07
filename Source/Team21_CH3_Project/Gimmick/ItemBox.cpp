@@ -7,6 +7,10 @@ AItemBox::AItemBox()
  	
 	PrimaryActorTick.bCanEverTick = false;
 
+	Boxcomponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoxMesh"));
+	SetRootComponent(Boxcomponent);
+	Boxcomponent->SetCollisionProfileName(TEXT("BlockAll"));
+
 }
 
 void AItemBox::Interact(AActor* Interactor)
