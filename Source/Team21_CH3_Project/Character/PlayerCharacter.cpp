@@ -9,10 +9,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Item/Weapon.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Component/PickupComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/DamageEvents.h"
 #include "Team21_CH3_Project.h"
+#include "Animation/CharacterAnimInstance.h"
 
 
 
@@ -156,12 +158,13 @@ void APlayerCharacter::InputAttackRanged(const FInputActionValue& InValue)
 
 void APlayerCharacter::InputAttackMelee(const FInputActionValue& InValue)
 {
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Attack()")));
 	if (GetCharacterMovement()->IsFalling() == true)
 	{
 		return;
 	}
-
-	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+	
+	UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 	if (IsValid(AnimInstance) == true && IsValid(AttackMeleeMontage) == true && AnimInstance->Montage_IsPlaying(AttackMeleeMontage) == false)
 	{
 		AnimInstance->Montage_Play(AttackMeleeMontage);

@@ -9,6 +9,7 @@
 #include "Engine/DamageEvents.h"
 #include "Team21_CH3_Project.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Component/StatusComponent.h"
 
 int32 ACharacterBase::ShowAttackMeleeDebug = 0;
 
@@ -49,7 +50,8 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f; // 이동키를 뗐을때 감속속도
 	GetCharacterMovement()->MaxAcceleration = 2048.f;
 
-	bIsDead = false;
+	//bIsDead = false;
+	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent")); //StatusComponent를 CHaracterrBase에 컴포넌트로 부착
 }
 
 void ACharacterBase::BeginPlay()
@@ -68,15 +70,17 @@ float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	float FinalDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	//부모클래스의 TakDamage가져와서 사용
 	
-	CurrentHP = FMath::Clamp(CurrentHP - FinalDamageAmount, 0.f, MaxHP);
+	// CurrentHP = FMath::Clamp(CurrentHP - FinalDamageAmount, 0.f, MaxHP);
+	StatusComponent->ApplyDamage(FinalDamageAmount);
 
-	if (CurrentHP < KINDA_SMALL_NUMBER)
+	//if (CurrentHP < KINDA_SMALL_NUMBER)
+	if (StatusComponent->IsDead() == true)
 		// KINDA_SMALL_NUMBER == 0.0001, 0이 아니더라도 0.0001이되면 죽음으로 간주
 		// 0.0f로 하면 컴퓨터가 미세하게 0.000001이렇게 값을 남길때도 있다.
 		// 예기치 못할 오류 방지
 	{
-		bIsDead = true; //GG
-		CurrentHP = 0.f; //현재 체력 0
+		//bIsDead = true; //GG
+		//CurrentHP = 0.f; //현재 체력 0
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		// 캡슐컴포넌트 NoCollision으로 설정
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
@@ -85,7 +89,7 @@ float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 	if (1 == ShowAttackMeleeDebug)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s [%.1f / %.1f]"), *GetName(), CurrentHP, MaxHP));
+		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s [%.1f / %.1f]"), *GetName(), StatusComponent->GetCurrentHP(), StatusComponent->GetMaxHP()));
 	}
 
 	return FinalDamageAmount;
