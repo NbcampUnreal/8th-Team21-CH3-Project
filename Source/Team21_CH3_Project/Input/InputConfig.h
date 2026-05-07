@@ -28,4 +28,6 @@ public:
 	TObjectPtr<UInputAction> Zoom;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UInputAction> Dash;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInputAction> ToggleSelector;
 };
