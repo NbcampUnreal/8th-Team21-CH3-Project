@@ -13,8 +13,11 @@ void UOutGameMainMenuWidget::NativeOnInitialized(){
 		ContinueButton->OnClicked.AddUniqueDynamic(this, &ThisClass::ShowLobby);
 	if (IsValid(PlayButton) == true)
 		PlayButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandlePlayClicked);
+	if (IsValid(SettingsButton) == true)
+		SettingsButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleSettingsClicked);
 	if (IsValid(QuitButton) == true)
 		QuitButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleQuitClicked);
+
 }
 
 void UOutGameMainMenuWidget::ShowLobby(){
@@ -28,6 +31,16 @@ void UOutGameMainMenuWidget::HandlePlayClicked(){
 		{
 			rootWidgetInstance->ShowMissionSelect();
 			// rootWidgetInstance->ShowTransition([this, pc, rootWidgetInstance]() {};
+		}
+	}
+}
+
+void UOutGameMainMenuWidget::HandleSettingsClicked(){
+	if (AOutGamePlayerController* pc = GetOwningPlayer<AOutGamePlayerController>())
+	{
+		if (UOutGameRootWidget* rootWidgetInstance = pc->GetRootWidget())
+		{
+			rootWidgetInstance->ShowSettings();
 		}
 	}
 }
