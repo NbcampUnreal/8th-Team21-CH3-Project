@@ -8,6 +8,8 @@
 class ACharacterBase;
 class UCharacterMovementComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPostDead);
+
 UCLASS()
 class TEAM21_CH3_PROJECT_API UCharacterAnimInstance : public UAnimInstance
 {
@@ -17,6 +19,13 @@ public:
 	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+private:
+	UFUNCTION()
+	void AnimNotify_PostDead();
+
+public:
+	FOnPostDead OnPostDead;
 
 protected:
 	TObjectPtr<ACharacterBase> OwnerCharacter;
@@ -28,6 +37,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float GroundSpeed; //걸을때 속력
 
+	UPROPERTY(BlueprintReadOnly)
+	float NormalizedCurrentPitch; //에임오프셋 Pitch
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	uint8 bIsMove : 1; //ABP에서 사용할 Get변수
 
@@ -36,4 +48,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	uint8 bIsUnarmed : 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	uint8 bShouldMove : 1;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	uint8 bIsDead : 1;
+
+
 };
