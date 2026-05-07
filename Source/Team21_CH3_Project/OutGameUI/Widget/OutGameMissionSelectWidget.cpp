@@ -46,6 +46,9 @@ void UOutGameMissionSelectWidget::HandleBackClicked(){
 					pc->SetViewTargetByTag("LobbyCamera", 0.0f);
 					if (IsValid(ScreenSwitcher) == true) ScreenSwitcher->SetActiveWidgetIndex(0);
 					rootWidgetInstance->ShowMainMenu();
+					
+					if (AOutGameCharacterPreviewManager* previewManager = GetPreviewManager())
+						previewManager->ClearCurrentCharacter();
 				});
 			}
 		}
@@ -60,6 +63,23 @@ void UOutGameMissionSelectWidget::HandleBackClicked(){
 			}
 		}
 	}
+}
+
+AOutGameCharacterPreviewManager* UOutGameMissionSelectWidget::GetPreviewManager() const{
+	TArray<AActor*> foundActors;
+	UGameplayStatics::GetAllActorsOfClass(
+		this,
+		AOutGameCharacterPreviewManager::StaticClass(),
+		foundActors
+	);
+
+	if (foundActors.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PreviewManager not found"));
+		return nullptr;
+	}
+	
+	return Cast<AOutGameCharacterPreviewManager>(foundActors[0]);
 }
 
 void UOutGameMissionSelectWidget::HandleCharacter01Clicked(){
@@ -79,20 +99,7 @@ void UOutGameMissionSelectWidget::HandleCharacterSelectClicked(FName characterId
 		}
 	}
 	
-	TArray<AActor*> foundActors;
-	UGameplayStatics::GetAllActorsOfClass(
-		this,
-		AOutGameCharacterPreviewManager::StaticClass(),
-		foundActors
-	);
-
-	if (foundActors.Num() <= 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PreviewManager not found"));
-		return;
-	}
-
-	AOutGameCharacterPreviewManager* previewManager = Cast<AOutGameCharacterPreviewManager>(foundActors[0]);
+	AOutGameCharacterPreviewManager* previewManager = GetPreviewManager();
 
 	if (!IsValid(previewManager))
 	{

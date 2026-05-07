@@ -107,6 +107,10 @@ void AOutGameCharacterPreviewManager::ClearCurrentCharacter(){
 	bMovingToTarget = false;
 }
 
+void AOutGameCharacterPreviewManager::ClearPreviewCharacter(){
+	ClearCurrentCharacter();
+}
+
 void AOutGameCharacterPreviewManager::PlayAnimation(){
 	if (currentPreviewIndex == INDEX_NONE || !IsValid(currentCharacter)) return;
 	
