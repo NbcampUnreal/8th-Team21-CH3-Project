@@ -30,8 +30,6 @@ private:
 	float pendingGraphicsQuality;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> applyButton;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UButton> backButton;
 	
 	UFUNCTION()
 	void HandleMouseSensitivityChanged(float value);
@@ -40,8 +38,6 @@ private:
 	void HandleGraphicsQualityChanged(FString selectedItem, ESelectInfo::Type selectionType);
 	UFUNCTION()
 	void HandleApplyClicked();
-	UFUNCTION()
-	void HandleBackClicked();
 	
 #pragma region sound
 	

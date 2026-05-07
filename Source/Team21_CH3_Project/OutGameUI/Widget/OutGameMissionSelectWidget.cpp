@@ -27,6 +27,7 @@ void UOutGameMissionSelectWidget::HandleLevelClicked(){
 		{
 			rootWidgetInstance->ShowTransition([this, pc, rootWidgetInstance]()
 			{
+				rootWidgetInstance->SetHeaderVisible(false);
 				pc->SetViewTargetByTag("CharacterSelectCamera", 0.0f);
 				if (IsValid(ScreenSwitcher) == true) ScreenSwitcher->SetActiveWidgetIndex(1);
 			});
@@ -45,8 +46,8 @@ void UOutGameMissionSelectWidget::HandleBackClicked(){
 				{
 					pc->SetViewTargetByTag("LobbyCamera", 0.0f);
 					if (IsValid(ScreenSwitcher) == true) ScreenSwitcher->SetActiveWidgetIndex(0);
-					rootWidgetInstance->ShowMainMenu();
-					
+					rootWidgetInstance->ShowWidget(EOutGameWidgetType::MainMenu);
+					rootWidgetInstance->SetHeaderVisible(true);
 					if (AOutGameCharacterPreviewManager* previewManager = GetPreviewManager())
 						previewManager->ClearCurrentCharacter();
 				});
@@ -58,7 +59,7 @@ void UOutGameMissionSelectWidget::HandleBackClicked(){
 		{
 			if (UOutGameRootWidget* rootWidgetInstance = pc->GetRootWidget())
 			{
-				rootWidgetInstance->ShowMainMenu();
+				rootWidgetInstance->ShowWidget(EOutGameWidgetType::MainMenu);
 				// rootWidgetInstance->ShowTransition([this, pc, rootWidgetInstance](){}
 			}
 		}

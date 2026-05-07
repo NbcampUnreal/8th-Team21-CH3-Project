@@ -20,7 +20,6 @@ void UOutGameSettingsWidget::NativeOnInitialized(){
 	if (IsValid(masterVolumeSlider)) masterVolumeSlider->OnValueChanged.AddUniqueDynamic(this, &ThisClass::HandleMasterVolumeChanged);
 	if (IsValid(graphicsQualityComboBox)) graphicsQualityComboBox->OnSelectionChanged.AddUniqueDynamic(this, &ThisClass::HandleGraphicsQualityChanged);
 	if (IsValid(applyButton)) applyButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleApplyClicked);
-	if (IsValid(backButton)) backButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleBackClicked);
 	
 	pendingGraphicsQuality = 2;
 }
@@ -65,15 +64,5 @@ void UOutGameSettingsWidget::HandleApplyClicked(){
 		gameUserSettings->SetOverallScalabilityLevel(pendingGraphicsQuality); // 0 Low, 1 Medium, 2 High, 3Epic, 4Cinematic
 		gameUserSettings->ApplySettings(false);
 		gameUserSettings->SaveSettings();
-	}
-}
-
-void UOutGameSettingsWidget::HandleBackClicked(){
-	if (AOutGamePlayerController* PC = GetOwningPlayer<AOutGamePlayerController>())
-	{
-		if (UOutGameRootWidget* RootWidgetInstance = PC->GetRootWidget())
-		{
-			RootWidgetInstance->ShowMainMenu();
-		}
 	}
 }

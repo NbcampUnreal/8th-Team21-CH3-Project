@@ -15,7 +15,7 @@ void UOutGameResultWidget::HandleReturnToLobby(){
 	{
 		if (UOutGameRootWidget* rootWidgetInstance = Cast<UOutGameRootWidget>(PC->GetRootWidget()))
 		{
-			rootWidgetInstance->ShowMainMenu();
+			rootWidgetInstance->ShowWidget(EOutGameWidgetType::MainMenu);
 		}
 	}
 }
